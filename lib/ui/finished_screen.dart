@@ -3,135 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import '../features/session/session_provider.dart';
-import '../features/stats/stats_service.dart';
+import '../features/session/session_completion.dart';
 import '../features/audio/sound_service.dart';
 import '../features/level/level_service.dart';
 import 'theme/luxury_theme.dart';
 import 'share_card_dialog.dart';
 import 'level_badge.dart';
-
-// Provider to record session completion and get achievements
-final sessionCompletionProvider = FutureProvider.autoDispose<SessionCompletionData>((ref) async {
-  final statsService = ref.read(statsServiceProvider);
-  final levelService = ref.read(levelServiceProvider);
-  final taskDuration = ref.read(taskDurationProvider);
-  final taskName = ref.read(taskNameProvider);
-  final energyLevel = ref.read(energyLevelProvider);
-  final health = ref.read(healthProvider);
-  final destructionMode = ref.read(destructionModeProvider);
-  final lockLevel = ref.read(lockLevelProvider);
-  final interruptions = ref.read(sessionInterruptionsProvider);
-  final emergencyBreaks = ref.read(sessionEmergencyBreaksProvider);
-  final hadFailures = health < 3; // Started with 3 health
-  
-  // Record the session and get new achievements
-  final newAchievements = await statsService.recordSessionComplete(
-    durationMinutes: taskDuration,
-    hadFailures: hadFailures,
-    taskName: taskName,
-    energyLevel: energyLevel,
-    interruptions: interruptions,
-    emergencyBreaks: emergencyBreaks,
-    lockLevel: lockLevel.keyName,
-  );
-  
-  // Add XP and check for level up
-  final levelResult = await levelService.addXp(
-    durationMinutes: taskDuration,
-    wasSuccessful: !hadFailures,
-    destructionMode: destructionMode,
-    energyLevel: energyLevel,
-  );
-  
-  // Get updated stats
-  final stats = await statsService.getStats();
-  
-  // Generate local announcements for achievements
-  final announcements = <String>[];
-  if (newAchievements.isNotEmpty) {
-    for (final achievement in newAchievements) {
-      announcements.add(_getDefaultAnnouncement(achievement));
-    }
-  }
-  
-  final completionMessage = _buildCompletionMessage(
-    taskName: taskName,
-    durationMinutes: taskDuration,
-    sessionsCompleted: stats.totalSessions,
-    currentStreak: stats.currentStreak,
-    hadFailures: hadFailures,
-  );
-  
-  // Clear previous verification image for next session
-  ref.read(previousVerificationImageProvider.notifier).clear();
-  
-  return SessionCompletionData(
-    newAchievements: newAchievements,
-    announcements: announcements,
-    completionMessage: completionMessage,
-    stats: stats,
-    levelResult: levelResult,
-  );
-});
-
-String _getDefaultAnnouncement(String achievement) {
-  switch (achievement) {
-    case 'first_session':
-      return 'THE JOURNEY BEGINS! You\'ve completed your first deep work session!';
-    case 'streak_7':
-      return 'LEGENDARY! 7 days of unwavering focus!';
-    case 'streak_30':
-      return 'MYTHICAL STATUS! 30 days of pure discipline!';
-    case 'hours_10':
-      return 'MILESTONE! 10 hours of deep work achieved!';
-    case 'hours_100':
-      return 'ONE HUNDRED HOURS! You are a DEEP WORK MASTER!';
-    case 'no_failures_10':
-      return 'PERFECT FOCUS! 10 sessions without a single phone pickup!';
-    default:
-      return 'Achievement Unlocked!';
-  }
-}
-
-String _buildCompletionMessage({
-  required String taskName,
-  required int durationMinutes,
-  required int sessionsCompleted,
-  required int currentStreak,
-  required bool hadFailures,
-}) {
-  final task = taskName.trim().isEmpty ? 'your task' : taskName.trim();
-
-  if (hadFailures) {
-    return 'Session complete. You still finished $durationMinutes minutes on $task. Consistency beats perfection.';
-  }
-
-  if (currentStreak >= 14) {
-    return 'Strong finish: $durationMinutes focused minutes on $task. Your $currentStreak-day streak is elite.';
-  }
-
-  if (sessionsCompleted <= 3) {
-    return 'Great start. You completed $durationMinutes minutes on $task and are building real momentum.';
-  }
-
-  return 'You stayed focused for $durationMinutes minutes on $task. Keep this rhythm going.';
-}
-
-class SessionCompletionData {
-  final List<String> newAchievements;
-  final List<String> announcements;
-  final String completionMessage;
-  final UserStats stats;
-  final LevelUpResult? levelResult;
-
-  SessionCompletionData({
-    required this.newAchievements,
-    required this.announcements,
-    required this.completionMessage,
-    required this.stats,
-    this.levelResult,
-  });
-}
 
 class FinishedScreen extends ConsumerStatefulWidget {
   const FinishedScreen({super.key});
@@ -204,7 +81,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
   @override
   Widget build(BuildContext context) {
     final taskName = ref.watch(taskNameProvider);
-    final completionData = ref.watch(sessionCompletionProvider);
+    final completionAsync = ref.watch(completedSessionFeedbackProvider);
 
     return Scaffold(
       backgroundColor: LuxuryColors.richBlack,
@@ -240,8 +117,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
 
           // Main content
           SafeArea(
-            child: completionData.when(
+            child: completionAsync.when(
               data: (data) {
+                if (data == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: LuxuryColors.platinumBlue,
+                      strokeWidth: 2,
+                    ),
+                  );
+                }
                 // Speak achievements
                 if (data.announcements.isNotEmpty) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -357,7 +242,9 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           return TweenAnimationBuilder<double>(
                             tween: Tween(begin: 0.0, end: 1.0),
                             duration:
-                                Duration(milliseconds: 600 + (entry.key * 300)),
+                                Duration(
+                                  milliseconds: (600 + (entry.key * 300)).toInt(),
+                                ),
                             builder: (context, value, child) {
                               return Opacity(
                                 opacity: value,
@@ -591,6 +478,36 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 ),
               ),
               error: (e, _) => _buildSimpleFinished(context, taskName),
+            ),
+          ),
+
+          // Back button
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, top: 8),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: GestureDetector(
+                  onTap: () {
+                    ref.read(sessionStateProvider.notifier).setCheckIn();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: LuxuryColors.cardBackground,
+                      border: Border.all(
+                        color: LuxuryColors.subtleBorder,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: LuxuryColors.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

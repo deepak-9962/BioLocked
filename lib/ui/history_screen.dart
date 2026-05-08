@@ -4,27 +4,38 @@ import 'dart:ui';
 import '../features/stats/stats_service.dart';
 import '../features/session/session_provider.dart';
 import 'widgets/heatmap_widget.dart';
+import 'widgets/app_usage_tab.dart';
+import 'widgets/insights_reports_tab.dart';
 import 'widgets/shared_bottom_nav_bar.dart';
 import 'theme/luxury_theme.dart';
 
-// Provider for session history
-final sessionHistoryProvider = FutureProvider<List<SessionRecord>>((ref) async {
-  return ref.read(statsServiceProvider).getSessionHistory();
-});
-
-// Provider for daily minutes heatmap
-final dailyMinutesProvider = FutureProvider<Map<DateTime, int>>((ref) async {
-  return ref.read(statsServiceProvider).getDailyMinutes(days: 35);
-});
-
-class HistoryScreen extends ConsumerWidget {
+class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends ConsumerState<HistoryScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final statsAsync = ref.watch(userStatsProvider);
     final historyAsync = ref.watch(sessionHistoryProvider);
-    final dailyMinutesAsync = ref.watch(dailyMinutesProvider);
     final weeklyAnalyticsAsync = ref.watch(weeklyAnalyticsProvider);
 
     return Scaffold(
@@ -37,20 +48,21 @@ class HistoryScreen extends ConsumerWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // Header
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => ref.read(sessionStateProvider.notifier).setCheckIn(),
+                      onTap: () =>
+                          ref.read(sessionStateProvider.notifier).setCheckIn(),
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: LuxuryColors.cardBackground,
                           border: Border.all(
-                            color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                            color:
+                                LuxuryColors.platinumBlue.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Icon(
@@ -61,112 +73,125 @@ class HistoryScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Text(
-                      'FOCUS HISTORY',
-                      style: LuxuryTextStyles.headlineLarge.copyWith(
-                        letterSpacing: 4,
+                    Expanded(
+                      child: Text(
+                        'FOCUS HISTORY',
+                        style: LuxuryTextStyles.headlineLarge.copyWith(
+                          letterSpacing: 4,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-
+              TabBar(
+                controller: _tabController,
+                indicatorColor: LuxuryColors.platinumBlue,
+                labelColor: LuxuryColors.platinumBlue,
+                unselectedLabelColor: LuxuryColors.textSecondary,
+                tabs: const [
+                  Tab(text: 'OVERVIEW'),
+                  Tab(text: 'INSIGHTS'),
+                  Tab(text: 'APP USAGE'),
+                ],
+              ),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Stats summary
-                      statsAsync.when(
-                        data: (stats) => _buildStatsSummary(stats),
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      Text(
-                        'THIS WEEK',
-                        style: LuxuryTextStyles.labelLarge.copyWith(
-                          color: LuxuryColors.textSecondary,
-                          letterSpacing: 3,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      weeklyAnalyticsAsync.when(
-                        data: (analytics) => _buildWeeklyAnalyticsCard(analytics),
-                        loading: () => SizedBox(
-                          height: 130,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: LuxuryColors.platinumBlue,
-                              strokeWidth: 2,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          statsAsync.when(
+                            data: _buildStatsSummary,
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            'THIS WEEK',
+                            style: LuxuryTextStyles.labelLarge.copyWith(
+                              color: LuxuryColors.textSecondary,
+                              letterSpacing: 3,
+                              fontSize: 12,
                             ),
                           ),
-                        ),
-                        error: (_, __) => const SizedBox.shrink(),
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Distraction Heatmap
-                      const SizedBox(height: 32),
-                      Consumer(builder: (context, ref, child) {
-                        final heatmapAsync = ref.watch(distractionHeatmapProvider);
-                        return heatmapAsync.when(
-                          data: (data) => DistractionHeatmapWidget(data: data),
-                          loading: () => SizedBox(
-                            height: 150,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: LuxuryColors.platinumBlue,
-                                strokeWidth: 2,
+                          const SizedBox(height: 16),
+                          weeklyAnalyticsAsync.when(
+                            data: _buildWeeklyAnalyticsCard,
+                            loading: () => SizedBox(
+                              height: 130,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: LuxuryColors.platinumBlue,
+                                  strokeWidth: 2,
+                                ),
                               ),
                             ),
+                            error: (_, __) => const SizedBox.shrink(),
                           ),
-                          error: (_, __) => const SizedBox.shrink(),
-                        );
-                      }),
-
-                      const SizedBox(height: 32),
-
-                      // Recent sessions
-                      Text(
-                        'RECENT SESSIONS',
-                        style: LuxuryTextStyles.labelLarge.copyWith(
-                          color: LuxuryColors.textSecondary,
-                          letterSpacing: 3,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      historyAsync.when(
-                        data: (sessions) => sessions.isEmpty
-                            ? _buildEmptyState()
-                            : Column(
-                                children: sessions
-                                    .reversed
-                                    .take(20)
-                                    .map((s) => _buildSessionCard(s))
-                                    .toList(),
-                              ),
-                        loading: () => SizedBox(
-                          height: 100,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: LuxuryColors.platinumBlue,
-                              strokeWidth: 2,
+                          const SizedBox(height: 32),
+                          Consumer(
+                            builder: (context, ref, _) {
+                              final heatmapAsync =
+                                  ref.watch(distractionHeatmapProvider);
+                              return heatmapAsync.when(
+                                data: (data) =>
+                                    DistractionHeatmapWidget(data: data),
+                                loading: () => SizedBox(
+                                  height: 150,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: LuxuryColors.platinumBlue,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                                error: (_, __) => const SizedBox.shrink(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                          Text(
+                            'RECENT SESSIONS',
+                            style: LuxuryTextStyles.labelLarge.copyWith(
+                              color: LuxuryColors.textSecondary,
+                              letterSpacing: 3,
+                              fontSize: 12,
                             ),
                           ),
-                        ),
-                        error: (_, __) => _buildEmptyState(),
+                          const SizedBox(height: 16),
+                          historyAsync.when(
+                            data: (sessions) => sessions.isEmpty
+                                ? _buildEmptyState()
+                                : Column(
+                                    children: sessions
+                                        .reversed
+                                        .take(20)
+                                        .map(_buildSessionCard)
+                                        .toList(),
+                                  ),
+                            loading: () => SizedBox(
+                              height: 100,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: LuxuryColors.platinumBlue,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            error: (_, __) => _buildEmptyState(),
+                          ),
+                          const SizedBox(height: 32),
+                        ],
                       ),
-
-                      const SizedBox(height: 32),
-                    ],
-                  ),
+                    ),
+                    const InsightsReportsTab(),
+                    const AppUsageTab(),
+                  ],
                 ),
               ),
             ],

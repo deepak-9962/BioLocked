@@ -44,6 +44,11 @@ class AppSettings {
   final bool soundEnabled;
   final bool hapticEnabled;
 
+  // ── Usage Analytics ───────────────────────────────────────────────────────
+  final bool appUsageTrackingEnabled;
+  final bool includeUsageInCsvExport;
+  final Map<String, String> appCategoryOverrides; // packageName -> category key
+
   // ── Spot Check Timing ─────────────────────────────────────────────────────
   final int shortSessionThresholdMinutes; // below = "short"
   final int mediumSessionThresholdMinutes; // below = "medium"
@@ -82,6 +87,9 @@ class AppSettings {
     this.appName = 'BIO-LOCKED',
     this.soundEnabled = true,
     this.hapticEnabled = true,
+    this.appUsageTrackingEnabled = true,
+    this.includeUsageInCsvExport = true,
+    this.appCategoryOverrides = const {},
 
     // Spot check timing
     this.shortSessionThresholdMinutes = 5,
@@ -111,6 +119,9 @@ class AppSettings {
     String? appName,
     bool? soundEnabled,
     bool? hapticEnabled,
+    bool? appUsageTrackingEnabled,
+    bool? includeUsageInCsvExport,
+    Map<String, String>? appCategoryOverrides,
     int? shortSessionThresholdMinutes,
     int? mediumSessionThresholdMinutes,
     int? longSessionSpotCheckMinutes,
@@ -143,6 +154,12 @@ class AppSettings {
       appName: appName ?? this.appName,
       soundEnabled: soundEnabled ?? this.soundEnabled,
       hapticEnabled: hapticEnabled ?? this.hapticEnabled,
+      appUsageTrackingEnabled:
+          appUsageTrackingEnabled ?? this.appUsageTrackingEnabled,
+      includeUsageInCsvExport:
+          includeUsageInCsvExport ?? this.includeUsageInCsvExport,
+      appCategoryOverrides:
+          appCategoryOverrides ?? this.appCategoryOverrides,
       shortSessionThresholdMinutes:
           shortSessionThresholdMinutes ?? this.shortSessionThresholdMinutes,
       mediumSessionThresholdMinutes:
@@ -174,6 +191,9 @@ class AppSettings {
         'appName': appName,
         'soundEnabled': soundEnabled,
         'hapticEnabled': hapticEnabled,
+        'appUsageTrackingEnabled': appUsageTrackingEnabled,
+        'includeUsageInCsvExport': includeUsageInCsvExport,
+        'appCategoryOverrides': appCategoryOverrides,
         'shortSessionThresholdMinutes': shortSessionThresholdMinutes,
         'mediumSessionThresholdMinutes': mediumSessionThresholdMinutes,
         'longSessionSpotCheckMinutes': longSessionSpotCheckMinutes,
@@ -204,6 +224,12 @@ class AppSettings {
         appName: json['appName'] ?? 'BIO-LOCKED',
         soundEnabled: json['soundEnabled'] ?? true,
         hapticEnabled: json['hapticEnabled'] ?? true,
+        appUsageTrackingEnabled: json['appUsageTrackingEnabled'] ?? true,
+        includeUsageInCsvExport: json['includeUsageInCsvExport'] ?? true,
+        appCategoryOverrides:
+            (json['appCategoryOverrides'] as Map<String, dynamic>?)
+                ?.map((k, v) => MapEntry(k, v.toString())) ??
+            const {},
         shortSessionThresholdMinutes:
             json['shortSessionThresholdMinutes'] ?? 5,
         mediumSessionThresholdMinutes:

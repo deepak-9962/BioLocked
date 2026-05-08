@@ -7,6 +7,7 @@ import '../sensors/screen_state_service.dart';
 import '../sensors/wakelock_service.dart';
 import '../sensors/vibration_service.dart';
 import '../audio/sound_service.dart';
+import '../app_usage/app_usage_providers.dart';
 import '../stats/stats_service.dart';
 import '../dnd/dnd_service.dart';
 import '../grayscale/grayscale_service.dart';
@@ -14,6 +15,8 @@ import '../coins/coins_service.dart';
 import '../accountability/accountability_service.dart';
 import '../kiosk/kiosk_service.dart';
 import '../notifications/notification_service.dart';
+import '../level/level_service.dart';
+import 'session_completion.dart';
 import 'session_logger.dart';
 
 enum SessionState {
@@ -95,11 +98,10 @@ class EmergencyBreakResult {
   });
 }
 
-// Provider to store previous verification image for progress comparison
-final previousVerificationImageProvider = StateProvider<Uint8List?>((ref) => null);
 
 class SessionStateMachine extends Notifier<SessionState> {
   StreamSubscription<bool>? _sensorSubscription;
+  StreamSubscription<void>? _motionSubscription;
   Timer? _gracePeriodTimer;
   Timer? _sessionTimer;
   String? _currentSessionId;
@@ -112,9 +114,14 @@ class SessionStateMachine extends Notifier<SessionState> {
     
     _sensorSubscription?.cancel();
     _sensorSubscription = sensorService.isFaceDownStream.listen(_handleSensorUpdate);
+
+    _motionSubscription?.cancel();
+    _motionSubscription =
+        sensorService.motionDuringSessionStream.listen((_) => _onMotionDuringSession());
     
     ref.onDispose(() {
       _sensorSubscription?.cancel();
+      _motionSubscription?.cancel();
       _gracePeriodTimer?.cancel();
       _sessionTimer?.cancel();
     });
@@ -140,7 +147,22 @@ class SessionStateMachine extends Notifier<SessionState> {
     }
   }
 
+  void _onMotionDuringSession() {
+    if (state != SessionState.inProgress && state != SessionState.alarm) {
+      return;
+    }
+    final remaining = ref.read(remainingSecondsProvider);
+    if (remaining <= 0) return;
+
+    if (state == SessionState.inProgress) {
+      _startGracePeriod();
+    } else {
+      ref.read(soundServiceProvider).speakPutPhoneDownReminder();
+    }
+  }
+
   void _startGracePeriod() {
+    if (state == SessionState.alarm) return;
     state = SessionState.alarm;
     ref.read(sessionInterruptionsProvider.notifier).increment();
     ref.read(soundServiceProvider).startAlarm();
@@ -166,19 +188,19 @@ class SessionStateMachine extends Notifier<SessionState> {
     final lockLevel = ref.read(lockLevelProvider);
 
     if (lockLevel == SessionLockLevel.hard) {
-      _logSessionEnd('$reason (Hard lock)', false);
+      _logSessionEndedFailure('$reason (Hard lock)');
       reset();
       return;
     }
     
     if (destructionMode) {
-      _logSessionEnd(reason, false);
+      _logSessionEndedFailure(reason);
       reset();
     } else {
       final currentHealth = ref.read(healthProvider);
       if (currentHealth <= 1) {
         ref.read(healthProvider.notifier).decrement();
-        _logSessionEnd('$reason (Health depleted)', false);
+        _logSessionEndedFailure('$reason (Health depleted)');
         reset();
       } else {
         ref.read(healthProvider.notifier).decrement();
@@ -187,18 +209,49 @@ class SessionStateMachine extends Notifier<SessionState> {
     }
   }
 
-  void _logSessionEnd(String reason, bool success) {
+  void _logSessionEndedFailure(String reason) {
+    final elapsed = _sessionStartTime == null
+        ? 0
+        : DateTime.now().difference(_sessionStartTime!).inMinutes;
+    _logSessionEnd(
+      reason,
+      false,
+      elapsedMinutes: elapsed,
+      plannedMinutes: ref.read(taskDurationProvider),
+      interruptions: ref.read(sessionInterruptionsProvider),
+      emergencyBreaks: ref.read(sessionEmergencyBreaksProvider),
+    );
+  }
+
+  void _logSessionEnd(
+    String reason,
+    bool success, {
+    int? elapsedMinutes,
+    int? plannedMinutes,
+    int? interruptions,
+    int? emergencyBreaks,
+  }) {
     if (_currentSessionId != null) {
       ref.read(sessionLoggerProvider).logSessionEnd(
         sessionId: _currentSessionId!,
         success: success,
         reason: reason,
+        elapsedMinutes: elapsedMinutes,
+        plannedMinutes: plannedMinutes,
+        interruptions: interruptions,
+        emergencyBreaks: emergencyBreaks,
+        lockLevel: ref.read(lockLevelProvider).keyName,
+        energyLevel: ref.read(energyLevelProvider),
+        taskName: ref.read(taskNameProvider),
       );
     }
   }
 
   void setSetup() => state = SessionState.setup;
-  void setCheckIn() => state = SessionState.checkIn;
+  void setCheckIn() {
+    ref.read(completedSessionFeedbackProvider.notifier).clear();
+    state = SessionState.checkIn;
+  }
   void setTunnelSetup() => state = SessionState.tunnelSetup;
   void setAccountSettings() => state = SessionState.accountSettings;
   
@@ -256,7 +309,8 @@ class SessionStateMachine extends Notifier<SessionState> {
     
     // TODO: Get real user ID
     ref.read(sessionLoggerProvider).logSessionStart(
-      userId: 'test_user', 
+      sessionId: _currentSessionId!,
+      userId: 'test_user',
       taskName: taskName,
       durationMinutes: duration,
       energyLevel: energy,
@@ -279,44 +333,111 @@ class SessionStateMachine extends Notifier<SessionState> {
   }
 
   void setFinished() {
-    _logSessionEnd('Completed', true);
-    ref.read(soundServiceProvider).speak("Session Completed. Good job.");
-    state = SessionState.finished;
-
     final elapsed = _sessionStartTime == null
         ? ref.read(taskDurationProvider)
         : DateTime.now().difference(_sessionStartTime!).inMinutes;
+    final planned = ref.read(taskDurationProvider);
+    final startedAt = _sessionStartTime;
     final interruptions = ref.read(sessionInterruptionsProvider);
     final emergencyBreaks = ref.read(sessionEmergencyBreaksProvider);
+    final hadFailures = ref.read(healthProvider) < 3;
 
-    // 🏆 Record session and award Focus Coins
+    ref.read(completedSessionFeedbackProvider.notifier).setLoading();
+
     unawaited(() async {
-      // 1. Record in stats service (which updates streaks)
-      await ref.read(statsServiceProvider).recordSessionComplete(
-        durationMinutes: elapsed,
-        hadFailures: false,
-        taskName: ref.read(taskNameProvider),
-        energyLevel: ref.read(energyLevelProvider),
-        interruptions: interruptions,
-        emergencyBreaks: emergencyBreaks,
-        lockLevel: ref.read(lockLevelProvider).keyName,
-      );
+      try {
+        final newAchievements = await ref.read(statsServiceProvider).recordSessionComplete(
+              durationMinutes: elapsed,
+              hadFailures: hadFailures,
+              taskName: ref.read(taskNameProvider),
+              energyLevel: ref.read(energyLevelProvider),
+              interruptions: interruptions,
+              emergencyBreaks: emergencyBreaks,
+              lockLevel: ref.read(lockLevelProvider).keyName,
+              plannedDurationMinutes: planned,
+              startedAt: startedAt,
+            );
 
-      // 2. Get fresh stats to see the new streak
-      final stats = await ref.read(statsServiceProvider).getStats();
+        ref.invalidate(sessionHistoryProvider);
+        ref.invalidate(insightsAnalyticsProvider);
+        ref.invalidate(usageHourlyBucketsProvider);
+        ref.invalidate(appUsageEntriesProvider);
+        ref.invalidate(topAppUsageProvider);
 
-      // 3. Award coins with real streak awareness
-      await ref.read(coinsServiceProvider).awardCoins(
-        durationMinutes: elapsed,
-        interruptions: interruptions,
-        streakDays: stats.currentStreak,
-      );
+        final statsAfterFirst = await ref.read(statsServiceProvider).getStats();
+        await ref.read(coinsServiceProvider).awardCoins(
+          durationMinutes: elapsed,
+          interruptions: interruptions,
+          streakDays: statsAfterFirst.currentStreak,
+        );
+
+        final levelResult = await ref.read(levelServiceProvider).addXp(
+              durationMinutes: elapsed,
+              wasSuccessful: !hadFailures,
+              destructionMode: ref.read(destructionModeProvider),
+              energyLevel: ref.read(energyLevelProvider),
+            );
+
+        final statsAfter = await ref.read(statsServiceProvider).getStats();
+        ref.read(completedSessionFeedbackProvider.notifier).setReady(
+              SessionCompletionData(
+                newAchievements: newAchievements,
+                announcements:
+                    newAchievements.map(getAchievementAnnouncement).toList(),
+                completionMessage: buildCompletionMessage(
+                  taskName: ref.read(taskNameProvider),
+                  durationMinutes: elapsed,
+                  sessionsCompleted: statsAfter.totalSessions,
+                  currentStreak: statsAfter.currentStreak,
+                  hadFailures: hadFailures,
+                ),
+                stats: statsAfter,
+                levelResult: levelResult,
+              ),
+            );
+
+        _logSessionEnd(
+          'Completed',
+          true,
+          elapsedMinutes: elapsed,
+          plannedMinutes: planned,
+          interruptions: interruptions,
+          emergencyBreaks: emergencyBreaks,
+        );
+
+        state = SessionState.finished;
+        unawaited(_completeSessionWithFeedback());
+        unawaited(_notifyPartnerSuccess());
+      } catch (_) {
+        final statsFallback = await ref.read(statsServiceProvider).getStats();
+        ref.read(completedSessionFeedbackProvider.notifier).setReady(
+              SessionCompletionData(
+                newAchievements: const [],
+                announcements: const [],
+                completionMessage: 'Session completed.',
+                stats: statsFallback,
+                levelResult: null,
+              ),
+            );
+        state = SessionState.finished;
+        unawaited(_completeSessionWithFeedback());
+      }
     }());
+  }
 
-    // 👥 Notify accountability partner on success (if configured)
-    unawaited(_notifyPartnerSuccess());
-
-    _cleanup();
+  Future<void> _completeSessionWithFeedback() async {
+    await ref.read(soundServiceProvider).stopAlarm();
+    await ref.read(dndServiceProvider).disableFocusDnd();
+    unawaited(NotificationService.showSessionCompleteNotification());
+    unawaited(ref.read(vibrationServiceProvider).sessionCompleteCelebrate());
+    try {
+      try {
+        await ref.read(soundServiceProvider).playSessionCompleteFanfare();
+      } catch (_) {}
+      await ref.read(soundServiceProvider).speak('Session Completed. Good job.');
+    } finally {
+      _cleanup();
+    }
   }
 
   Future<void> _notifyPartnerSuccess() async {
@@ -385,7 +506,7 @@ class SessionStateMachine extends Notifier<SessionState> {
     ref.read(sessionEmergencyBreaksProvider.notifier).increment();
 
     unawaited(_recordFailedSession('Emergency break used'));
-    _logSessionEnd('Emergency break used', false);
+    _logSessionEndedFailure('Emergency break used');
     ref.read(soundServiceProvider).speak('Emergency break used. Cooldown started.');
     reset();
 
@@ -403,7 +524,7 @@ class SessionStateMachine extends Notifier<SessionState> {
     }
 
     unawaited(_recordFailedSession('Session abandoned'));
-    _logSessionEnd('Session abandoned', false);
+    _logSessionEndedFailure('Session abandoned');
     ref.read(soundServiceProvider).speak('Session ended.');
 
     // 👥 Notify accountability partner on failure
@@ -458,12 +579,18 @@ class SessionStateMachine extends Notifier<SessionState> {
           interruptions: ref.read(sessionInterruptionsProvider),
           emergencyBreaks: ref.read(sessionEmergencyBreaksProvider),
           lockLevel: ref.read(lockLevelProvider).keyName,
+          plannedDurationMinutes: ref.read(taskDurationProvider),
+          startedAt: _sessionStartTime,
         );
+    ref.invalidate(sessionHistoryProvider);
+    ref.invalidate(insightsAnalyticsProvider);
+    ref.invalidate(usageHourlyBucketsProvider);
+    ref.invalidate(appUsageEntriesProvider);
+    ref.invalidate(topAppUsageProvider);
   }
 
   void _cleanup() {
     _gracePeriodTimer?.cancel();
-    _spotCheckTimer?.cancel();
     _sessionTimer?.cancel();
     ref.read(sensorServiceProvider).stopListening();
     ref.read(wakelockServiceProvider).disable();

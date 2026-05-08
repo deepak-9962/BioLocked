@@ -19,6 +19,11 @@ A strict, non-AI productivity app that uses physical phone state, checkpoints, a
   - Local notifications remind you to start planned focus blocks.
 - Weekly Analytics:
   - Focus time, success rate, failed sessions, pickup interruptions, best/toughest hour.
+- App Usage Analytics (Android):
+  - Hour-wise per-app usage tracking (requires Usage Access special permission).
+  - Compare distracting-app windows vs study/focus windows.
+  - Categorize apps as Study / Neutral / Distracting for stronger insights.
+  - Privacy controls: pause usage tracking, clear usage history, export usage CSV.
 - Focus Presets:
   - Study Sprint, Deep Work, Workout Lock, Sleep Wind-down.
 - Recovery and Micro-Wins modes for low-energy days.

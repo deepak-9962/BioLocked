@@ -312,6 +312,34 @@ class NotificationService {
     );
   }
 
+  /// Heads-up alert when the focus timer ends (phone may be face-down).
+  static Future<void> showSessionCompleteNotification() async {
+    await initialize();
+    await _notifications.show(
+      499001,
+      'Focus session complete',
+      'Time\'s up — pick up your phone. Great work!',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'session_complete',
+          'Session finished',
+          channelDescription: 'Sounds when your deep work timer ends',
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: true,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFF50C878),
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      payload: 'session_complete',
+    );
+  }
+
   /// Show instant notification (for achievements, etc)
   static Future<void> showInstantNotification({
     required String title,
