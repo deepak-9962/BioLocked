@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/session/session_provider.dart';
-import '../theme/luxury_theme.dart';
+import '../theme/web_app_theme.dart';
 
 class SharedBottomNavBar extends ConsumerWidget {
   final int currentIndex;
@@ -14,10 +14,10 @@ class SharedBottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 14),
       decoration: const BoxDecoration(
-        color: Color(0xE609090B),
-        border: Border(top: BorderSide(color: LuxuryColors.richBlack)), // slightly visible divider
+        color: WebAppColors.background,
+        border: Border(top: BorderSide(color: WebAppColors.border)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -57,27 +57,31 @@ class SharedBottomNavBar extends ConsumerWidget {
     required bool isActive,
     required VoidCallback onTap,
   }) {
-    final color = isActive ? LuxuryColors.platinumBlue : LuxuryColors.textSecondary;
+    final color = isActive ? WebAppColors.cream : WebAppColors.textMuted;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: 82,
+        padding: const EdgeInsets.symmetric(vertical: 9),
         decoration: BoxDecoration(
-          color: isActive ? LuxuryColors.platinumBlue.withAlpha(25) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: isActive ? WebAppColors.surfaceStrong : Colors.transparent,
+          border: Border.all(
+            color: isActive ? WebAppColors.borderStrong : Colors.transparent,
+          ),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: 24),
+            Icon(icon, color: color, size: 21),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 color: color,
                 fontSize: 10,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
               ),
             ),

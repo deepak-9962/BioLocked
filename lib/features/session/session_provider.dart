@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../sensors/sensor_service.dart';
 import '../sensors/screen_state_service.dart';
 import '../sensors/wakelock_service.dart';
@@ -95,8 +96,19 @@ class EmergencyBreakResult {
   });
 }
 
-// Provider to store previous verification image for progress comparison
-final previousVerificationImageProvider = StateProvider<Uint8List?>((ref) => null);
+// Provider to store previous verification image for progress comparison.
+class PreviousVerificationImageNotifier extends Notifier<Uint8List?> {
+  @override
+  Uint8List? build() => null;
+
+  void set(Uint8List? value) => state = value;
+  void clear() => state = null;
+}
+
+final previousVerificationImageProvider =
+    NotifierProvider<PreviousVerificationImageNotifier, Uint8List?>(
+  PreviousVerificationImageNotifier.new,
+);
 
 class SessionStateMachine extends Notifier<SessionState> {
   StreamSubscription<bool>? _sensorSubscription;
@@ -189,10 +201,16 @@ class SessionStateMachine extends Notifier<SessionState> {
 
   void _logSessionEnd(String reason, bool success) {
     if (_currentSessionId != null) {
+      final elapsedMinutes = _sessionStartTime == null
+          ? 0
+          : DateTime.now().difference(_sessionStartTime!).inMinutes;
       ref.read(sessionLoggerProvider).logSessionEnd(
         sessionId: _currentSessionId!,
         success: success,
         reason: reason,
+        durationMinutes: elapsedMinutes,
+        interruptions: ref.read(sessionInterruptionsProvider),
+        emergencyBreaks: ref.read(sessionEmergencyBreaksProvider),
       );
     }
   }
@@ -254,12 +272,21 @@ class SessionStateMachine extends Notifier<SessionState> {
     ref.read(remainingSecondsProvider.notifier).set(duration * 60);
     _startSessionTimer();
     
-    // TODO: Get real user ID
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      _failSession('No signed-in user');
+      return;
+    }
+
     ref.read(sessionLoggerProvider).logSessionStart(
-      userId: 'test_user', 
+      sessionId: _currentSessionId!,
+      userId: userId,
       taskName: taskName,
       durationMinutes: duration,
       energyLevel: energy,
+      interruptions: 0,
+      emergencyBreaks: 0,
+      lockLevel: ref.read(lockLevelProvider).keyName,
     );
   }
 
@@ -463,7 +490,6 @@ class SessionStateMachine extends Notifier<SessionState> {
 
   void _cleanup() {
     _gracePeriodTimer?.cancel();
-    _spotCheckTimer?.cancel();
     _sessionTimer?.cancel();
     ref.read(sensorServiceProvider).stopListening();
     ref.read(wakelockServiceProvider).disable();

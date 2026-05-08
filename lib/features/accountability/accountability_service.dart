@@ -63,7 +63,7 @@ class AccountabilityService {
     required String partnerName,
   }) async {
     final message =
-        '🏆 Hey $partnerName! I just crushed a ${durationMinutes}-minute deep work session'
+        '🏆 Hey $partnerName! I just crushed a $durationMinutes-minute deep work session'
         ' on "$taskName" with BioLocked! 🔒\n\n'
         'No distractions. Phone locked. Work done.\n\n'
         '—Sent from BioLocked';

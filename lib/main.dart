@@ -13,7 +13,9 @@ import 'ui/finished_screen.dart';
 import 'ui/micro_wins_screen.dart';
 import 'ui/history_screen.dart';
 import 'ui/theme/luxury_theme.dart';
+import 'ui/theme/web_app_theme.dart';
 import 'ui/app_settings_screen.dart';
+import 'ui/auth_screen.dart';
 import 'ui/widgets/overlay_lock_widget.dart';
 import 'features/overlay/overlay_service.dart';
 import 'features/kiosk/kiosk_service.dart';
@@ -46,18 +48,49 @@ void main() async {
   // Initialize notifications
   await NotificationService.initialize();
   
-  // TODO: Replace with your Supabase URL and Anon Key
   try {
     await Supabase.initialize(
-      url: 'YOUR_SUPABASE_URL',
-      anonKey: 'YOUR_SUPABASE_ANON_KEY',
+      url: 'https://hflvglnqfxetdaagmmrf.supabase.co',
+      anonKey: 'sb_publishable_qzsooOjiXWZHrINIZ4FG8w__96v1rRJ',
     );
   } catch (e) {
     debugPrint('Supabase initialization failed: $e');
     // Continue running app even if Supabase fails, for UI demo purposes.
   }
 
-  runApp(const ProviderScope(child: BioLockedApp()));
+  runApp(const ProviderScope(child: BioLockedRoot()));
+}
+
+class BioLockedRoot extends StatefulWidget {
+  const BioLockedRoot({super.key});
+
+  @override
+  State<BioLockedRoot> createState() => _BioLockedRootState();
+}
+
+class _BioLockedRootState extends State<BioLockedRoot> {
+  late final Stream<AuthState> _authStateStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStateStream = Supabase.instance.client.auth.onAuthStateChange;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AuthState>(
+      stream: _authStateStream,
+      builder: (context, snapshot) {
+        final session = Supabase.instance.client.auth.currentSession;
+        if (session == null) {
+          return const AuthScreen();
+        }
+
+        return const BioLockedApp();
+      },
+    );
+  }
 }
 
 class BioLockedApp extends ConsumerStatefulWidget {
@@ -159,15 +192,15 @@ class _BioLockedAppState extends ConsumerState<BioLockedApp>
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: LuxuryColors.platinumBlue,
-        scaffoldBackgroundColor: LuxuryColors.richBlack,
+        primaryColor: WebAppColors.blue,
+        scaffoldBackgroundColor: WebAppColors.background,
         useMaterial3: true,
         fontFamily: 'Roboto',
         colorScheme: ColorScheme.dark(
-          primary: LuxuryColors.platinumBlue,
-          secondary: LuxuryColors.burnishedGold,
-          surface: LuxuryColors.elevatedSurface,
-          error: LuxuryColors.rubyRed,
+          primary: WebAppColors.blue,
+          secondary: WebAppColors.cream,
+          surface: const Color(0xFF18161D),
+          error: WebAppColors.red,
         ),
         textTheme: TextTheme(
           displayLarge: LuxuryTextStyles.displayLarge,

@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 
 class LuxuryColors {
   // Primary Backgrounds
-  static const Color richBlack = Color(0xFF0A0A0F);
-  static const Color elevatedSurface = Color(0xFF12121A);
-  static const Color cardBackground = Color(0xFF1A1A24);
-  static const Color subtleBorder = Color(0xFF2A2A3A);
+  static const Color richBlack = Color(0xFF111015);
+  static const Color elevatedSurface = Color(0xFF18161D);
+  static const Color cardBackground = Color(0x0AFFFFFF);
+  static const Color subtleBorder = Color(0x1AFFFFFF);
   
   // Energy Colors - Low (Platinum Blue)
   static const Color platinumBlueLight = Color(0xFFA8D4E6);
@@ -17,10 +17,10 @@ class LuxuryColors {
   static const Color platinumBlueDark = Color(0xFF5BA3C0);
   
   // Energy Colors - Medium (Burnished Gold)
-  static const Color champagne = Color(0xFFF7E7CE);
+  static const Color champagne = Color(0xFFD6D3CC);
   static const Color burnishedGold = Color(0xFFD4AF37);
   static const Color darkGold = Color(0xFFC9A227);
-  static const Color champagneGold = Color(0xFFF7E7CE);
+  static const Color champagneGold = Color(0xFFD6D3CC);
   
   // Energy Colors - High (Deep Rose)
   static const Color roseLight = Color(0xFFE85A71);
@@ -45,8 +45,8 @@ class LuxuryColors {
   
   // Text Colors
   static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFE0E0E0);
-  static const Color textTertiary = Color(0xFF8A8A9A);
+  static const Color textSecondary = Color(0xFFA7A0AD);
+  static const Color textTertiary = Color(0xFF7C7484);
   static const Color textGold = Color(0xFFD4AF37);
   static const Color textSuccess = Color(0xFF50C878);
   static const Color textWarning = Color(0xFFE85A71);
@@ -58,9 +58,9 @@ class LuxuryGradients {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF0A0A0F),
-      Color(0xFF1A1025),
-      Color(0xFF0A0A0F),
+      Color(0xFF111015),
+      Color(0xFF18161D),
+      Color(0xFF111015),
     ],
   );
   
@@ -68,9 +68,9 @@ class LuxuryGradients {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF0A0A0F),
-      Color(0xFF12121A),
-      Color(0xFF0A0A0F),
+      Color(0xFF111015),
+      Color(0xFF18161D),
+      Color(0xFF111015),
     ],
   );
   
@@ -78,9 +78,9 @@ class LuxuryGradients {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF0A0A0F),
-      Color(0xFF151520),
-      Color(0xFF0A0A0F),
+      Color(0xFF111015),
+      Color(0xFF18161D),
+      Color(0xFF111015),
     ],
   );
   
@@ -164,22 +164,22 @@ class LuxuryTextStyles {
   static const TextStyle displayLarge = TextStyle(
     color: LuxuryColors.textPrimary,
     fontSize: 36,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 4,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0,
   );
   
   static const TextStyle headlineLarge = TextStyle(
     color: LuxuryColors.textPrimary,
     fontSize: 28,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 2,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0,
   );
   
   static const TextStyle titleLarge = TextStyle(
     color: LuxuryColors.textPrimary,
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    letterSpacing: 1,
+    letterSpacing: 0,
   );
   
   static const TextStyle bodyLarge = TextStyle(
@@ -200,7 +200,7 @@ class LuxuryTextStyles {
     color: LuxuryColors.textPrimary,
     fontSize: 14,
     fontWeight: FontWeight.bold,
-    letterSpacing: 1,
+    letterSpacing: 0.4,
   );
 
   static const TextStyle heroTitle = TextStyle(

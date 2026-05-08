@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// User level and XP system for gamification
 class LevelSystem {
@@ -177,16 +179,28 @@ class LevelTitles {
 class LevelService {
   static const _storage = FlutterSecureStorage();
   static const _levelKey = 'user_level_data';
+  static const _progressTable = 'user_progress';
 
   /// Get current level data
   Future<UserLevelData> getLevelData() async {
     final data = await _storage.read(key: _levelKey);
-    if (data == null) return UserLevelData();
-    try {
-      return UserLevelData.fromJson(jsonDecode(data));
-    } catch (e) {
-      return UserLevelData();
+    if (data != null) {
+      try {
+        return UserLevelData.fromJson(jsonDecode(data));
+      } catch (e) {
+        debugPrint('[LevelService] Failed to decode local level data: $e');
+      }
     }
+
+    final remote = await _loadRemoteLevelData();
+    if (remote != null) {
+      await _storage.write(
+        key: _levelKey,
+        value: jsonEncode(remote.toJson()),
+      );
+      return remote;
+    }
+    return UserLevelData();
   }
 
   /// Save level data
@@ -195,6 +209,53 @@ class LevelService {
       key: _levelKey,
       value: jsonEncode(data.toJson()),
     );
+    await _syncLevelToRemote(data);
+  }
+
+  String? _currentUserId() {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (e) {
+      debugPrint('[LevelService] Supabase not available: $e');
+      return null;
+    }
+  }
+
+  Future<UserLevelData?> _loadRemoteLevelData() async {
+    final userId = _currentUserId();
+    if (userId == null) return null;
+    try {
+      final rows = await Supabase.instance.client
+          .from(_progressTable)
+          .select('level_json')
+          .eq('user_id', userId)
+          .limit(1);
+      if (rows.isEmpty) return null;
+      final row = Map<String, dynamic>.from(rows.first as Map);
+      final rawLevel = row['level_json'];
+      if (rawLevel is! Map) return null;
+      return UserLevelData.fromJson(Map<String, dynamic>.from(rawLevel));
+    } catch (e) {
+      debugPrint('[LevelService] Remote level fetch failed: $e');
+      return null;
+    }
+  }
+
+  Future<void> _syncLevelToRemote(UserLevelData data) async {
+    final userId = _currentUserId();
+    if (userId == null) return;
+    try {
+      await Supabase.instance.client.from(_progressTable).upsert(
+        {
+          'user_id': userId,
+          'level_json': data.toJson(),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        onConflict: 'user_id',
+      );
+    } catch (e) {
+      debugPrint('[LevelService] Remote level sync failed: $e');
+    }
   }
 
   /// Add XP and check for level up

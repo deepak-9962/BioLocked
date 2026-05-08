@@ -13,7 +13,7 @@ Future<bool> showCommitmentContract(
   final result = await showGeneralDialog<bool>(
     context: context,
     barrierDismissible: false,
-    barrierColor: Colors.black.withOpacity(0.85),
+    barrierColor: Colors.black.withValues(alpha: 0.85),
     pageBuilder: (context, _, __) => _CommitmentContractPage(
       taskName: taskName,
       durationMinutes: durationMinutes,
@@ -107,14 +107,14 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                       height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: LuxuryColors.rubyRed.withOpacity(0.1 + 0.08 * _pulseController.value),
+                        color: LuxuryColors.rubyRed.withValues(alpha: 0.1 + 0.08 * _pulseController.value),
                         border: Border.all(
-                          color: LuxuryColors.rubyRed.withOpacity(0.6 + 0.3 * _pulseController.value),
+                          color: LuxuryColors.rubyRed.withValues(alpha: 0.6 + 0.3 * _pulseController.value),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: LuxuryColors.rubyRed.withOpacity(0.3 * _pulseController.value),
+                            color: LuxuryColors.rubyRed.withValues(alpha: 0.3 * _pulseController.value),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),
@@ -160,7 +160,7 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                     color: LuxuryColors.cardBackground,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: LuxuryColors.rubyRed.withOpacity(0.3),
+                      color: LuxuryColors.rubyRed.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -234,7 +234,7 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                     color: _isMatch
                         ? LuxuryColors.emerald
                         : _hasError
-                            ? LuxuryColors.rubyRed.withOpacity(0.8)
+                            ? LuxuryColors.rubyRed.withValues(alpha: 0.8)
                             : LuxuryColors.textPrimary,
                   ),
                   decoration: InputDecoration(
@@ -282,7 +282,7 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                             ? LinearGradient(
                                 colors: [
                                   LuxuryColors.rubyRed,
-                                  LuxuryColors.rubyRed.withOpacity(0.7),
+                                  LuxuryColors.rubyRed.withValues(alpha: 0.7),
                                 ],
                               )
                             : LinearGradient(
@@ -300,7 +300,7 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                         boxShadow: _isMatch
                             ? [
                                 BoxShadow(
-                                  color: LuxuryColors.rubyRed.withOpacity(0.4),
+                                  color: LuxuryColors.rubyRed.withValues(alpha: 0.4),
                                   blurRadius: 20,
                                   offset: const Offset(0, 6),
                                 ),
@@ -368,9 +368,9 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,

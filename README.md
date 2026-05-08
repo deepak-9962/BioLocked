@@ -41,6 +41,35 @@ Supabase is still initialized in app startup for session logging support.
 
 If Supabase is not configured, the app still runs locally.
 
+### Supabase progress sync (stats/history/level)
+
+The app now syncs progress data to Supabase in addition to local secure storage.
+
+Create this table in your Supabase SQL editor:
+
+```sql
+create table if not exists public.user_progress (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  stats_json jsonb,
+  history_json jsonb,
+  level_json jsonb,
+  updated_at timestamptz default now()
+);
+
+alter table public.user_progress enable row level security;
+
+create policy "Users can read own progress"
+  on public.user_progress
+  for select
+  using (auth.uid() = user_id);
+
+create policy "Users can upsert own progress"
+  on public.user_progress
+  for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+```
+
 ## Running
 
 ```bash

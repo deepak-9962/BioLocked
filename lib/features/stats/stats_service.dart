@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// A single session record for history
 class SessionRecord {
@@ -134,31 +136,50 @@ class StatsService {
   static const _storage = FlutterSecureStorage();
   static const _statsKey = 'user_stats';
   static const _historyKey = 'session_history';
+  static const _progressTable = 'user_progress';
 
   Future<UserStats> getStats() async {
     final data = await _storage.read(key: _statsKey);
-    if (data == null) return UserStats();
-    try {
-      return UserStats.fromJson(jsonDecode(data));
-    } catch (e) {
-      return UserStats();
+    if (data != null) {
+      try {
+        return UserStats.fromJson(jsonDecode(data));
+      } catch (e) {
+        debugPrint('[StatsService] Failed to decode local stats: $e');
+      }
     }
+    final remoteStats = await _loadRemoteStats();
+    if (remoteStats != null) {
+      await _storage.write(key: _statsKey, value: jsonEncode(remoteStats.toJson()));
+      return remoteStats;
+    }
+    return UserStats();
   }
 
   Future<void> saveStats(UserStats stats) async {
     await _storage.write(key: _statsKey, value: jsonEncode(stats.toJson()));
+    await _syncStatsToRemote(stats);
   }
 
   /// Get session history
   Future<List<SessionRecord>> getSessionHistory() async {
     final data = await _storage.read(key: _historyKey);
-    if (data == null) return [];
-    try {
-      final List<dynamic> jsonList = jsonDecode(data);
-      return jsonList.map((j) => SessionRecord.fromJson(j)).toList();
-    } catch (e) {
-      return [];
+    if (data != null) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(data);
+        return jsonList.map((j) => SessionRecord.fromJson(j)).toList();
+      } catch (e) {
+        debugPrint('[StatsService] Failed to decode local session history: $e');
+      }
     }
+    final remoteHistory = await _loadRemoteHistory();
+    if (remoteHistory != null) {
+      await _storage.write(
+        key: _historyKey,
+        value: jsonEncode(remoteHistory.map((s) => s.toJson()).toList()),
+      );
+      return remoteHistory;
+    }
+    return [];
   }
 
   /// Save a session to history
@@ -173,6 +194,95 @@ class StatsService {
       key: _historyKey,
       value: jsonEncode(history.map((s) => s.toJson()).toList()),
     );
+    await _syncHistoryToRemote(history);
+  }
+
+  String? _currentUserId() {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (e) {
+      debugPrint('[StatsService] Supabase not available: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchRemoteProgressRow() async {
+    final userId = _currentUserId();
+    if (userId == null) return null;
+    try {
+      final rows = await Supabase.instance.client
+          .from(_progressTable)
+          .select('stats_json,history_json')
+          .eq('user_id', userId)
+          .limit(1);
+      if (rows.isEmpty) return null;
+      return Map<String, dynamic>.from(rows.first as Map);
+    } catch (e) {
+      debugPrint('[StatsService] Remote progress fetch failed: $e');
+    }
+    return null;
+  }
+
+  Future<UserStats?> _loadRemoteStats() async {
+    final row = await _fetchRemoteProgressRow();
+    if (row == null) return null;
+    final rawStats = row['stats_json'];
+    if (rawStats is! Map) return null;
+    try {
+      return UserStats.fromJson(Map<String, dynamic>.from(rawStats));
+    } catch (e) {
+      debugPrint('[StatsService] Failed to decode remote stats: $e');
+      return null;
+    }
+  }
+
+  Future<List<SessionRecord>?> _loadRemoteHistory() async {
+    final row = await _fetchRemoteProgressRow();
+    if (row == null) return null;
+    final rawHistory = row['history_json'];
+    if (rawHistory is! List) return null;
+    try {
+      return rawHistory
+          .map((entry) => SessionRecord.fromJson(Map<String, dynamic>.from(entry as Map)))
+          .toList();
+    } catch (e) {
+      debugPrint('[StatsService] Failed to decode remote history: $e');
+      return null;
+    }
+  }
+
+  Future<void> _syncStatsToRemote(UserStats stats) async {
+    final userId = _currentUserId();
+    if (userId == null) return;
+    try {
+      await Supabase.instance.client.from(_progressTable).upsert(
+        {
+          'user_id': userId,
+          'stats_json': stats.toJson(),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        onConflict: 'user_id',
+      );
+    } catch (e) {
+      debugPrint('[StatsService] Remote stats sync failed: $e');
+    }
+  }
+
+  Future<void> _syncHistoryToRemote(List<SessionRecord> history) async {
+    final userId = _currentUserId();
+    if (userId == null) return;
+    try {
+      await Supabase.instance.client.from(_progressTable).upsert(
+        {
+          'user_id': userId,
+          'history_json': history.map((s) => s.toJson()).toList(),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        onConflict: 'user_id',
+      );
+    } catch (e) {
+      debugPrint('[StatsService] Remote history sync failed: $e');
+    }
   }
 
   /// Get sessions for a specific date

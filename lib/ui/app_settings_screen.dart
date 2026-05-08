@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../features/settings/app_settings_service.dart';
 import '../features/session/session_provider.dart';
 import 'theme/luxury_theme.dart';
@@ -44,6 +45,8 @@ class AppSettingsScreen extends ConsumerWidget {
                       _buildEconomySection(ref, settings),
                       const SizedBox(height: 16),
                       _buildAppPersonaSection(ref, settings),
+                      const SizedBox(height: 16),
+                      _buildAccountSection(context),
                     ],
                   ),
                 ),
@@ -272,6 +275,39 @@ class AppSettingsScreen extends ConsumerWidget {
       ],
     );
   }
+
+  Widget _buildAccountSection(BuildContext context) {
+    final email = Supabase.instance.client.auth.currentUser?.email ?? 'Signed in';
+
+    return _SettingsSection(
+      title: 'ACCOUNT',
+      icon: Icons.person_outline,
+      iconColor: LuxuryColors.platinumBlue,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                email,
+                style: LuxuryTextStyles.bodyMedium.copyWith(
+                  color: LuxuryColors.textSecondary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await Supabase.instance.client.auth.signOut();
+              },
+              child: const Text(
+                'Sign out',
+                style: TextStyle(color: LuxuryColors.rubyRed),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 // ─── Reusable UI Components ────────────────────────────────────────────────
@@ -357,7 +393,7 @@ class _SettingsSwitch extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: LuxuryColors.burnishedGold,
+            activeThumbColor: LuxuryColors.burnishedGold,
           ),
         ],
       ),
@@ -414,14 +450,12 @@ class _SettingsTextField extends StatelessWidget {
   final String title;
   final String hint;
   final String value;
-  final bool isPassword;
   final ValueChanged<String> onChanged;
 
   const _SettingsTextField({
     required this.title,
     required this.hint,
     required this.value,
-    this.isPassword = false,
     required this.onChanged,
   });
 
@@ -438,7 +472,6 @@ class _SettingsTextField extends StatelessWidget {
             controller: TextEditingController(text: value)
               ..selection = TextSelection.fromPosition(
                   TextPosition(offset: value.length)),
-            obscureText: isPassword,
             style: const TextStyle(color: LuxuryColors.textPrimary),
             decoration: InputDecoration(
               hintText: hint,
