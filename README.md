@@ -44,6 +44,7 @@ If Supabase is not configured, the app still runs locally.
 ### Supabase progress sync (stats/history/level)
 
 The app now syncs progress data to Supabase in addition to local secure storage.
+On signed-in app launch, existing local stats/history/level data is backfilled to Supabase.
 
 Create this table in your Supabase SQL editor:
 

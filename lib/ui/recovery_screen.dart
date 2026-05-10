@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import '../features/session/session_provider.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 import 'widgets/shared_bottom_nav_bar.dart';
 
 class RecoveryScreen extends ConsumerStatefulWidget {
@@ -35,7 +35,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LuxuryColors.richBlack,
+      backgroundColor: BioColors.background,
       bottomNavigationBar: const SharedBottomNavBar(currentIndex: 2),
       body: Stack(
         children: [
@@ -59,9 +59,9 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  LuxuryColors.richBlack.withValues(alpha: 0.3),
-                  LuxuryColors.richBlack.withValues(alpha: 0.9),
-                  LuxuryColors.richBlack,
+                  BioColors.background.withValues(alpha: 0.3),
+                  BioColors.background.withValues(alpha: 0.9),
+                  BioColors.background,
                 ],
                 stops: const [0.0, 0.6, 1.0],
               ),
@@ -88,14 +88,14 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: LuxuryColors.platinumBlue.withValues(alpha: 0.1),
+                              color: BioColors.blue400.withValues(alpha: 0.1),
                               border: Border.all(
-                                color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                                color: BioColors.blue400.withValues(alpha: 0.3),
                               ),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.arrow_back,
-                              color: LuxuryColors.platinumBlue,
+                              color: BioColors.blue400,
                               size: 20,
                             ),
                           ),
@@ -103,30 +103,30 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                       ],
                     ),
                   ),
-                  const SizedBox(height: 48), // replaces top Spacer
+                  const SizedBox(height: 48),
 
                   // Recovery icon
                   Container(
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: LuxuryColors.platinumBlue.withValues(alpha: 0.1),
+                      color: BioColors.blue400.withValues(alpha: 0.1),
                       border: Border.all(
-                        color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                        color: BioColors.blue400.withValues(alpha: 0.3),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: LuxuryColors.platinumBlue.withValues(alpha: 0.2),
+                          color: BioColors.blue400.withValues(alpha: 0.2),
                           blurRadius: 40,
                           spreadRadius: 10,
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.spa,
                       size: 56,
-                      color: LuxuryColors.platinumBlue,
+                      color: BioColors.blue400,
                     ),
                   ),
 
@@ -134,8 +134,8 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
 
                   Text(
                     'RECOVERY MODE',
-                    style: LuxuryTextStyles.headlineLarge.copyWith(
-                      color: LuxuryColors.platinumBlue,
+                    style: BioTextStyles.headlineLg.copyWith(
+                      color: BioColors.blue400,
                       letterSpacing: 6,
                     ),
                   ),
@@ -145,8 +145,8 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                   Text(
                     'Your energy is low. Take it easy.\nNo strict locks. Just gentle recovery.',
                     textAlign: TextAlign.center,
-                    style: LuxuryTextStyles.bodyLarge.copyWith(
-                      color: LuxuryColors.textSecondary,
+                    style: BioTextStyles.bodyLg.copyWith(
+                      color: BioColors.onSurfaceVariant,
                       height: 1.6,
                     ),
                   ),
@@ -159,13 +159,13 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                       Container(
                         width: 40,
                         height: 1,
-                        color: LuxuryColors.textSecondary.withValues(alpha: 0.3),
+                        color: BioColors.onSurfaceVariant.withValues(alpha: 0.3),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         'GENTLE ACTIVITIES',
-                        style: LuxuryTextStyles.labelLarge.copyWith(
-                          color: LuxuryColors.textSecondary.withValues(alpha: 0.7),
+                        style: BioTextStyles.labelCaps.copyWith(
+                          color: BioColors.onSurfaceVariant.withValues(alpha: 0.7),
                           letterSpacing: 3,
                           fontSize: 11,
                         ),
@@ -174,7 +174,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                       Expanded(
                         child: Container(
                           height: 1,
-                          color: LuxuryColors.textSecondary.withValues(alpha: 0.3),
+                          color: BioColors.onSurfaceVariant.withValues(alpha: 0.3),
                         ),
                       ),
                     ],
@@ -188,7 +188,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                     title: 'Breathing Exercise',
                     subtitle: 'Calm your mind with deep breaths',
                     icon: Icons.air,
-                    color: LuxuryColors.platinumBlue,
+                    color: BioColors.blue400,
                   ),
                   const SizedBox(height: 12),
                   _buildActivityCard(
@@ -196,7 +196,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                     title: 'Light Reading',
                     subtitle: 'Enjoy a book or article',
                     icon: Icons.menu_book,
-                    color: LuxuryColors.amethyst,
+                    color: BioColors.purple500,
                   ),
                   const SizedBox(height: 12),
                   _buildActivityCard(
@@ -204,7 +204,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                     title: 'Gentle Sketching',
                     subtitle: 'Express yourself creatively',
                     icon: Icons.brush,
-                    color: LuxuryColors.burnishedGold,
+                    color: BioColors.primaryFixed,
                   ),
                   const SizedBox(height: 12),
                   _buildActivityCard(
@@ -212,10 +212,10 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                     title: 'Take a Walk',
                     subtitle: 'Move your body, clear your head',
                     icon: Icons.directions_walk,
-                    color: LuxuryColors.emerald,
+                    color: BioColors.green500,
                   ),
 
-                  const SizedBox(height: 40), // replaces bottom Spacer
+                  const SizedBox(height: 40),
 
                   // Exit button
                   GestureDetector(
@@ -226,25 +226,25 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: LuxuryColors.platinumBlue.withValues(alpha: 0.5),
+                          color: BioColors.blue400.withValues(alpha: 0.5),
                         ),
-                        color: LuxuryColors.cardBackground.withValues(alpha: 0.5),
+                        color: BioColors.cardBg.withValues(alpha: 0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward,
-                            color: LuxuryColors.platinumBlue,
+                            color: BioColors.blue400,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             'FEELING BETTER? CHECK IN',
-                            style: LuxuryTextStyles.labelLarge.copyWith(
-                              color: LuxuryColors.platinumBlue,
+                            style: BioTextStyles.labelCaps.copyWith(
+                              color: BioColors.blue400,
                               letterSpacing: 2,
                             ),
                           ),
@@ -276,9 +276,9 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
           SnackBar(
             content: Text(
               'Starting $title...',
-              style: TextStyle(color: LuxuryColors.textPrimary),
+              style: const TextStyle(color: BioColors.onSurface),
             ),
-            backgroundColor: LuxuryColors.cardBackground,
+            backgroundColor: BioColors.cardBg,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -287,7 +287,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
         );
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
@@ -299,7 +299,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                   color.withValues(alpha: 0.05),
                 ],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: color.withValues(alpha: 0.2),
               ),
@@ -325,7 +325,7 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                     children: [
                       Text(
                         title,
-                        style: LuxuryTextStyles.titleLarge.copyWith(
+                        style: BioTextStyles.headlineLg.copyWith(
                           color: color,
                           fontSize: 16,
                         ),
@@ -333,8 +333,8 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen>
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textSecondary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                           fontSize: 13,
                         ),
                       ),
@@ -365,7 +365,7 @@ class _WavePainter extends CustomPainter {
     // Draw multiple wave layers
     for (int i = 0; i < 3; i++) {
       final paint = Paint()
-        ..color = LuxuryColors.platinumBlue.withValues(alpha: 0.05 - (i * 0.015))
+        ..color = BioColors.blue400.withValues(alpha: 0.05 - (i * 0.015))
         ..style = PaintingStyle.fill;
 
       final path = Path();

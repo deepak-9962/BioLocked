@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/level/level_service.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 
 /// Widget to display user level, XP, and progress
 class LevelBadge extends ConsumerWidget {
@@ -32,12 +32,12 @@ class LevelBadge extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           colors: [
-            LuxuryColors.burnishedGold.withValues(alpha: 0.2),
-            LuxuryColors.burnishedGold.withValues(alpha: 0.1),
+            BioColors.primaryFixed.withValues(alpha: 0.2),
+            BioColors.primaryFixed.withValues(alpha: 0.1),
           ],
         ),
         border: Border.all(
-          color: LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+          color: BioColors.primaryFixed.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -48,12 +48,12 @@ class LevelBadge extends ConsumerWidget {
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LuxuryGradients.goldShimmer,
+              color: BioColors.primaryFixed,
             ),
             child: Text(
               '${data.currentLevel}',
               style: const TextStyle(
-                color: LuxuryColors.richBlack,
+                color: BioColors.onPrimaryFixed,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
@@ -69,7 +69,7 @@ class LevelBadge extends ConsumerWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
-                    color: LuxuryColors.cardBackground,
+                    color: BioColors.cardBg,
                   ),
                 ),
                 FractionallySizedBox(
@@ -78,7 +78,7 @@ class LevelBadge extends ConsumerWidget {
                     height: 4,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(2),
-                      gradient: LuxuryGradients.goldShimmer,
+                      color: BioColors.primaryFixed,
                     ),
                   ),
                 ),
@@ -88,8 +88,8 @@ class LevelBadge extends ConsumerWidget {
           const SizedBox(width: 6),
           Text(
             '${data.totalXp} XP',
-            style: TextStyle(
-              color: LuxuryColors.burnishedGold,
+            style: const TextStyle(
+              color: BioColors.primaryFixed,
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
@@ -106,7 +106,7 @@ class LevelBadge extends ConsumerWidget {
     final nextTitleLevel = LevelTitles.getNextTitleLevel(data.currentLevel);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
@@ -116,13 +116,13 @@ class LevelBadge extends ConsumerWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                LuxuryColors.burnishedGold.withValues(alpha: 0.15),
-                LuxuryColors.burnishedGold.withValues(alpha: 0.05),
+                BioColors.primaryFixed.withValues(alpha: 0.15),
+                BioColors.primaryFixed.withValues(alpha: 0.05),
               ],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+              color: BioColors.primaryFixed.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -136,10 +136,10 @@ class LevelBadge extends ConsumerWidget {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LuxuryGradients.goldShimmer,
+                      color: BioColors.primaryFixed,
                       boxShadow: [
                         BoxShadow(
-                          color: LuxuryColors.burnishedGold.withValues(alpha: 0.4),
+                          color: BioColors.primaryFixed.withValues(alpha: 0.4),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),
@@ -149,18 +149,18 @@ class LevelBadge extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
+                          const Text(
                             'LV',
                             style: TextStyle(
-                              color: LuxuryColors.richBlack,
+                              color: BioColors.onPrimaryFixed,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             '${data.currentLevel}',
-                            style: TextStyle(
-                              color: LuxuryColors.richBlack,
+                            style: const TextStyle(
+                              color: BioColors.onPrimaryFixed,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
@@ -177,16 +177,17 @@ class LevelBadge extends ConsumerWidget {
                       children: [
                         Text(
                           data.title,
-                          style: LuxuryTextStyles.titleLarge.copyWith(
-                            color: LuxuryColors.burnishedGold,
+                          style: BioTextStyles.headlineLg.copyWith(
+                            color: BioColors.primaryFixed,
                             fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${data.totalXp} Total XP',
-                          style: LuxuryTextStyles.bodyMedium.copyWith(
-                            color: LuxuryColors.textSecondary,
+                          style: BioTextStyles.bodyMd.copyWith(
+                            color: BioColors.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -205,15 +206,15 @@ class LevelBadge extends ConsumerWidget {
                     children: [
                       Text(
                         'Level ${data.currentLevel + 1}',
-                        style: TextStyle(
-                          color: LuxuryColors.textTertiary,
+                        style: const TextStyle(
+                          color: BioColors.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
                       Text(
                         '$currentLevelXp / $xpForNext XP',
-                        style: TextStyle(
-                          color: LuxuryColors.burnishedGold,
+                        style: const TextStyle(
+                          color: BioColors.primaryFixed,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -227,7 +228,7 @@ class LevelBadge extends ConsumerWidget {
                         height: 8,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: LuxuryColors.cardBackground,
+                          color: BioColors.cardBg,
                         ),
                       ),
                       FractionallySizedBox(
@@ -236,10 +237,10 @@ class LevelBadge extends ConsumerWidget {
                           height: 8,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
-                            gradient: LuxuryGradients.goldShimmer,
+                            color: BioColors.primaryFixed,
                             boxShadow: [
                               BoxShadow(
-                                color: LuxuryColors.burnishedGold.withValues(alpha: 0.5),
+                                color: BioColors.primaryFixed.withValues(alpha: 0.5),
                                 blurRadius: 8,
                               ),
                             ],
@@ -258,24 +259,24 @@ class LevelBadge extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: LuxuryColors.amethyst.withValues(alpha: 0.15),
+                    color: BioColors.purple500.withValues(alpha: 0.15),
                     border: Border.all(
-                      color: LuxuryColors.amethyst.withValues(alpha: 0.3),
+                      color: BioColors.purple500.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.star,
-                        color: LuxuryColors.amethyst,
+                        color: BioColors.purple500,
                         size: 16,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Next title at Level $nextTitleLevel: ${LevelTitles.titles[nextTitleLevel]}',
-                          style: TextStyle(
-                            color: LuxuryColors.amethyst,
+                          style: const TextStyle(
+                            color: BioColors.purple500,
                             fontSize: 12,
                           ),
                         ),
@@ -311,7 +312,7 @@ class LevelUpDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
@@ -321,13 +322,13 @@ class LevelUpDialog extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  LuxuryColors.burnishedGold.withValues(alpha: 0.2),
-                  LuxuryColors.cardBackground.withValues(alpha: 0.95),
+                  BioColors.primaryFixed.withValues(alpha: 0.2),
+                  BioColors.cardBg.withValues(alpha: 0.95),
                 ],
               ),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: LuxuryColors.burnishedGold.withValues(alpha: 0.5),
+                color: BioColors.primaryFixed.withValues(alpha: 0.5),
               ),
             ),
             child: Column(
@@ -338,18 +339,18 @@ class LevelUpDialog extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LuxuryGradients.goldShimmer,
+                    color: BioColors.primaryFixed,
                     boxShadow: [
                       BoxShadow(
-                        color: LuxuryColors.burnishedGold.withValues(alpha: 0.6),
+                        color: BioColors.primaryFixed.withValues(alpha: 0.6),
                         blurRadius: 30,
                         spreadRadius: 5,
                       ),
                     ],
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_upward,
-                    color: LuxuryColors.richBlack,
+                    color: BioColors.onPrimaryFixed,
                     size: 40,
                   ),
                 ),
@@ -358,8 +359,8 @@ class LevelUpDialog extends StatelessWidget {
 
                 Text(
                   'LEVEL UP!',
-                  style: LuxuryTextStyles.displayLarge.copyWith(
-                    color: LuxuryColors.burnishedGold,
+                  style: BioTextStyles.headlineXl.copyWith(
+                    color: BioColors.primaryFixed,
                     letterSpacing: 6,
                   ),
                 ),
@@ -368,8 +369,9 @@ class LevelUpDialog extends StatelessWidget {
 
                 Text(
                   'Level ${result.previousLevel} → ${result.newLevel}',
-                  style: LuxuryTextStyles.titleLarge.copyWith(
-                    color: LuxuryColors.textSecondary,
+                  style: BioTextStyles.headlineLg.copyWith(
+                    color: BioColors.onSurfaceVariant,
+                    fontSize: 18,
                   ),
                 ),
 
@@ -378,23 +380,23 @@ class LevelUpDialog extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
                         colors: [
-                          LuxuryColors.amethyst.withValues(alpha: 0.3),
-                          LuxuryColors.amethyst.withValues(alpha: 0.1),
+                          BioColors.purple500.withValues(alpha: 0.3),
+                          BioColors.purple500.withValues(alpha: 0.1),
                         ],
                       ),
                       border: Border.all(
-                        color: LuxuryColors.amethyst.withValues(alpha: 0.5),
+                        color: BioColors.purple500.withValues(alpha: 0.5),
                       ),
                     ),
                     child: Column(
                       children: [
-                        Text(
+                        const Text(
                           'NEW TITLE UNLOCKED',
                           style: TextStyle(
-                            color: LuxuryColors.amethyst,
+                            color: BioColors.purple500,
                             fontSize: 11,
                             letterSpacing: 2,
                             fontWeight: FontWeight.bold,
@@ -403,9 +405,10 @@ class LevelUpDialog extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           result.newTitle!,
-                          style: LuxuryTextStyles.titleLarge.copyWith(
-                            color: LuxuryColors.textPrimary,
+                          style: BioTextStyles.headlineLg.copyWith(
+                            color: BioColors.onSurface,
                             fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                         ),
                       ],
@@ -417,8 +420,8 @@ class LevelUpDialog extends StatelessWidget {
 
                 Text(
                   '+${result.xpEarned} XP',
-                  style: LuxuryTextStyles.headlineLarge.copyWith(
-                    color: LuxuryColors.emerald,
+                  style: BioTextStyles.headlineLg.copyWith(
+                    color: BioColors.green500,
                   ),
                 ),
 
@@ -429,13 +432,13 @@ class LevelUpDialog extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                     decoration: BoxDecoration(
-                      gradient: LuxuryGradients.goldShimmer,
-                      borderRadius: BorderRadius.circular(16),
+                      color: BioColors.primaryFixed,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       'AWESOME!',
-                      style: LuxuryTextStyles.labelLarge.copyWith(
-                        color: LuxuryColors.richBlack,
+                      style: BioTextStyles.labelCaps.copyWith(
+                        color: BioColors.onPrimaryFixed,
                         letterSpacing: 2,
                       ),
                     ),

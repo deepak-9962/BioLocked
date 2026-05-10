@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/session/session_provider.dart';
-import '../theme/web_app_theme.dart';
+import '../theme/bio_theme.dart';
 
+/// Bottom navigation bar matching the HTML reference design.
+///
+/// Rounded-top pill shape, shadow above, active item gets a filled circle
+/// background with the lime primary color on the icon + label.
 class SharedBottomNavBar extends ConsumerWidget {
   final int currentIndex;
 
@@ -14,78 +18,104 @@ class SharedBottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 14),
-      decoration: const BoxDecoration(
-        color: WebAppColors.background,
-        border: Border(top: BorderSide(color: WebAppColors.border)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
-            icon: Icons.timer,
-            label: 'FOCUS',
-            isActive: currentIndex == 0,
-            onTap: () => ref.read(sessionStateProvider.notifier).setCheckIn(),
-          ),
-          _buildNavItem(
-            icon: Icons.bar_chart,
-            label: 'STATS',
-            isActive: currentIndex == 1,
-            onTap: () => ref.read(sessionStateProvider.notifier).setHistory(),
-          ),
-          _buildNavItem(
-            icon: Icons.bedtime,
-            label: 'SLEEP',
-            isActive: currentIndex == 2,
-            onTap: () => ref.read(sessionStateProvider.notifier).setRecoveryMode(),
-          ),
-          _buildNavItem(
-            icon: Icons.person,
-            label: 'ACCOUNT',
-            isActive: currentIndex == 3,
-            onTap: () => ref.read(sessionStateProvider.notifier).setAccountSettings(),
+      decoration: BoxDecoration(
+        color: BioColors.surfaceContainer,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.5),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavItem(
+                icon: Icons.timer,
+                label: 'Focus',
+                isActive: currentIndex == 0,
+                onTap: () => ref.read(sessionStateProvider.notifier).setCheckIn(),
+              ),
+              _NavItem(
+                icon: Icons.bar_chart,
+                label: 'Stats',
+                isActive: currentIndex == 1,
+                onTap: () => ref.read(sessionStateProvider.notifier).setHistory(),
+              ),
+              _NavItem(
+                icon: Icons.bedtime,
+                label: 'Sleep',
+                isActive: currentIndex == 2,
+                onTap: () => ref.read(sessionStateProvider.notifier).setRecoveryMode(),
+              ),
+              _NavItem(
+                icon: Icons.person,
+                label: 'Account',
+                isActive: currentIndex == 3,
+                onTap: () => ref.read(sessionStateProvider.notifier).setAccountSettings(),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required bool isActive,
-    required VoidCallback onTap,
-  }) {
-    final color = isActive ? WebAppColors.cream : WebAppColors.textMuted;
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isActive ? BioColors.primaryFixed : BioColors.onSurfaceVariant;
+    final opacity = isActive ? 1.0 : 0.6;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: 82,
-        padding: const EdgeInsets.symmetric(vertical: 9),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
-          color: isActive ? WebAppColors.surfaceStrong : Colors.transparent,
-          border: Border.all(
-            color: isActive ? WebAppColors.borderStrong : Colors.transparent,
-          ),
-          borderRadius: BorderRadius.circular(8),
+          color: isActive ? BioColors.surfaceContainerHighest : Colors.transparent,
+          borderRadius: BorderRadius.circular(32),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 21),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.0,
+        child: Opacity(
+          opacity: opacity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: BioTextStyles.labelCaps.copyWith(
+                  color: color,
+                  fontSize: 10,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

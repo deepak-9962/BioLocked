@@ -1,59 +1,60 @@
 import 'package:flutter/material.dart';
+import 'bio_theme.dart';
+
+/// Reusable compound widgets used across tunnel, in-progress, and auth screens.
+/// All colors now derive from the BioColors design system.
 
 class WebAppColors {
-  static const background = Color(0xFF111015);
+  static const background = BioColors.background;
   static const surface = Color(0x0AFFFFFF);
   static const surfaceStrong = Color(0x10FFFFFF);
   static const border = Color(0x1AFFFFFF);
   static const borderStrong = Color(0x26FFFFFF);
-  static const text = Color(0xFFE6E0E9);
-  static const textMuted = Color(0xFFA7A0AD);
+  static const text = BioColors.onSurface;
+  static const textMuted = BioColors.onSurfaceVariant;
   static const textFaint = Color(0xFF7C7484);
-  static const cream = Color(0xFFD6D3CC);
-  static const blue = Color(0xFF7EC8E3);
-  static const gold = Color(0xFFD4AF37);
-  static const green = Color(0xFF50C878);
-  static const red = Color(0xFFEF8686);
+  static const cream = BioColors.primaryFixed;
+  static const blue = BioColors.blue400;
+  static const gold = BioColors.primaryFixed;
+  static const green = BioColors.green500;
+  static const red = BioColors.red500;
 }
 
 class WebAppText {
-  static const brand = TextStyle(
-    color: WebAppColors.cream,
+  static TextStyle brand = BioTextStyles.labelCaps.copyWith(
+    color: BioColors.primaryFixed,
     fontSize: 13,
-    fontWeight: FontWeight.w700,
     letterSpacing: 4,
   );
 
-  static const eyebrow = TextStyle(
-    color: WebAppColors.blue,
+  static TextStyle eyebrow = BioTextStyles.labelCaps.copyWith(
+    color: BioColors.primaryFixed,
     fontSize: 12,
-    fontWeight: FontWeight.w700,
     letterSpacing: 3,
   );
 
-  static const title = TextStyle(
+  static TextStyle title = BioTextStyles.headlineLg.copyWith(
     color: Colors.white,
     fontSize: 34,
     fontWeight: FontWeight.w700,
     height: 1.08,
   );
 
-  static const sectionTitle = TextStyle(
+  static TextStyle sectionTitle = BioTextStyles.headlineLg.copyWith(
     color: Colors.white,
     fontSize: 20,
     fontWeight: FontWeight.w700,
   );
 
-  static const body = TextStyle(
-    color: WebAppColors.textMuted,
+  static TextStyle body = BioTextStyles.bodyMd.copyWith(
+    color: BioColors.onSurfaceVariant,
     fontSize: 15,
     height: 1.55,
   );
 
-  static const label = TextStyle(
-    color: WebAppColors.cream,
+  static TextStyle label = BioTextStyles.labelCaps.copyWith(
+    color: BioColors.primaryFixed,
     fontSize: 12,
-    fontWeight: FontWeight.w700,
     letterSpacing: 1.2,
   );
 }
@@ -71,11 +72,11 @@ class WebAppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: WebAppColors.background,
+      backgroundColor: BioColors.background,
       bottomNavigationBar: bottomNavigationBar,
       body: Container(
         decoration: const BoxDecoration(
-          color: WebAppColors.background,
+          color: BioColors.background,
         ),
         child: SafeArea(child: child),
       ),
@@ -99,23 +100,35 @@ class WebTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: WebAppColors.border)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: BioColors.outlineVariant.withValues(alpha: 0.3))),
       ),
       child: Row(
         children: [
           if (onBack != null) ...[
-            IconButton(
-              onPressed: onBack,
-              icon: const Icon(Icons.arrow_back, color: WebAppColors.text),
-              tooltip: 'Back',
+            GestureDetector(
+              onTap: onBack,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: BioColors.surfaceContainerHigh,
+                  border: Border.all(color: BioColors.outlineVariant),
+                ),
+                child: const Icon(Icons.arrow_back, color: BioColors.onSurface, size: 20),
+              ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 12),
           ],
           Expanded(
             child: Text(
               title ?? 'BIO-LOCKED',
-              style: WebAppText.brand,
+              style: BioTextStyles.labelCaps.copyWith(
+                color: BioColors.primaryFixed,
+                letterSpacing: 4,
+                fontSize: 13,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -145,8 +158,8 @@ class WebCard extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: backgroundColor ?? WebAppColors.surface,
-        border: Border.all(color: borderColor ?? WebAppColors.border),
+        color: backgroundColor ?? BioColors.surface,
+        border: Border.all(color: borderColor ?? BioColors.outlineVariant.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: child,
@@ -175,10 +188,10 @@ class WebPrimaryButton extends StatelessWidget {
         icon: Icon(icon ?? Icons.arrow_forward, size: 18),
         label: Text(label),
         style: FilledButton.styleFrom(
-          backgroundColor: WebAppColors.cream,
-          foregroundColor: WebAppColors.background,
-          disabledBackgroundColor: WebAppColors.textFaint.withValues(alpha: 0.35),
-          disabledForegroundColor: WebAppColors.textMuted,
+          backgroundColor: BioColors.primaryFixed,
+          foregroundColor: BioColors.onPrimaryFixed,
+          disabledBackgroundColor: BioColors.surfaceContainerHighest,
+          disabledForegroundColor: BioColors.onSurfaceVariant,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
@@ -212,8 +225,8 @@ class WebSecondaryButton extends StatelessWidget {
         icon: Icon(icon ?? Icons.arrow_forward, size: 18),
         label: Text(label),
         style: OutlinedButton.styleFrom(
-          foregroundColor: WebAppColors.text,
-          side: const BorderSide(color: WebAppColors.borderStrong),
+          foregroundColor: BioColors.onSurface,
+          side: BorderSide(color: BioColors.outlineVariant.withValues(alpha: 0.5)),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
@@ -246,11 +259,11 @@ class WebMetricTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (icon != null) Icon(icon, color: WebAppColors.textMuted, size: 17),
+          if (icon != null) Icon(icon, color: BioColors.onSurfaceVariant, size: 17),
           if (icon != null) const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
+            style: BioTextStyles.headlineLg.copyWith(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -264,8 +277,8 @@ class WebMetricTile extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: WebAppColors.textMuted,
+            style: BioTextStyles.bodyMd.copyWith(
+              color: BioColors.onSurfaceVariant,
               fontSize: 12,
               height: 1.15,
             ),
@@ -287,7 +300,7 @@ class WebChip extends StatelessWidget {
     super.key,
     required this.label,
     this.icon,
-    this.color = WebAppColors.cream,
+    this.color = BioColors.primaryFixed,
     this.selected = false,
     this.onTap,
   });
@@ -305,13 +318,13 @@ class WebChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 15, color: selected ? WebAppColors.background : color),
+            Icon(icon, size: 15, color: selected ? BioColors.onPrimaryFixed : color),
             const SizedBox(width: 7),
           ],
           Text(
             label,
             style: TextStyle(
-              color: selected ? WebAppColors.background : color,
+              color: selected ? BioColors.onPrimaryFixed : color,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),

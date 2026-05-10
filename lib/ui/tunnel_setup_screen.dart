@@ -48,11 +48,11 @@ class _TunnelSetupScreenState extends ConsumerState<TunnelSetupScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
               children: [
-                const Text('CONFIGURE SESSION', style: WebAppText.eyebrow),
+                Text('CONFIGURE SESSION', style: WebAppText.eyebrow),
                 const SizedBox(height: 14),
-                const Text('One task. Full focus.', style: WebAppText.title),
+                Text('One task. Full focus.', style: WebAppText.title),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Choose what you are locking for, how long, and how strict the Android enforcement should be.',
                   style: WebAppText.body,
                 ),
@@ -70,7 +70,7 @@ class _TunnelSetupScreenState extends ConsumerState<TunnelSetupScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Mission', style: WebAppText.sectionTitle),
+                      Text('Mission', style: WebAppText.sectionTitle),
                       const SizedBox(height: 14),
                       TextField(
                         controller: _taskController,
@@ -92,7 +92,7 @@ class _TunnelSetupScreenState extends ConsumerState<TunnelSetupScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Duration', style: WebAppText.sectionTitle),
+                          Text('Duration', style: WebAppText.sectionTitle),
                           Text(
                             '$duration min',
                             style: const TextStyle(
@@ -163,7 +163,7 @@ class _TunnelSetupScreenState extends ConsumerState<TunnelSetupScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Lock level', style: WebAppText.sectionTitle),
+                      Text('Lock level', style: WebAppText.sectionTitle),
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,

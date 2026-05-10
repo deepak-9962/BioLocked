@@ -156,7 +156,7 @@ class _FocusPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('FOCUSED', style: WebAppText.eyebrow),
+          Text('FOCUSED', style: WebAppText.eyebrow),
           const SizedBox(height: 12),
           Text(
             taskName.trim().isEmpty ? 'Untitled focus block' : taskName,
@@ -209,9 +209,9 @@ class _WaitingPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('PLACE DEVICE', style: WebAppText.eyebrow),
+          Text('PLACE DEVICE', style: WebAppText.eyebrow),
           const SizedBox(height: 12),
-          const Text('Face down to begin', style: WebAppText.title),
+          Text('Face down to begin', style: WebAppText.title),
           const SizedBox(height: 12),
           Text(
             '${lockLevel.label} lock is armed. Put the phone face down on a flat surface to start the timer.',
@@ -257,7 +257,7 @@ class _AlarmPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text('Put it down', style: WebAppText.title),
+          Text('Put it down', style: WebAppText.title),
           const SizedBox(height: 12),
           Text(
             'You have ${lockLevel.graceSeconds} seconds of grace in ${lockLevel.label.toLowerCase()} mode before this session fails.',

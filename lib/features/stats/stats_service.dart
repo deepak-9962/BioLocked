@@ -160,6 +160,59 @@ class StatsService {
     await _syncStatsToRemote(stats);
   }
 
+  /// One-time helper to push existing local progress into Supabase.
+  Future<void> backfillLocalToRemote() async {
+    final userId = _currentUserId();
+    if (userId == null) return;
+
+    final localStatsRaw = await _storage.read(key: _statsKey);
+    final localHistoryRaw = await _storage.read(key: _historyKey);
+    if (localStatsRaw == null && localHistoryRaw == null) return;
+
+    final payload = <String, dynamic>{
+      'user_id': userId,
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    if (localStatsRaw != null) {
+      try {
+        final decoded = jsonDecode(localStatsRaw);
+        if (decoded is Map) {
+          payload['stats_json'] = Map<String, dynamic>.from(decoded);
+        }
+      } catch (e) {
+        debugPrint('[StatsService] Failed to decode local stats for backfill: $e');
+      }
+    }
+
+    if (localHistoryRaw != null) {
+      try {
+        final decoded = jsonDecode(localHistoryRaw);
+        if (decoded is List) {
+          payload['history_json'] = decoded
+              .whereType<Map>()
+              .map((entry) => Map<String, dynamic>.from(entry))
+              .toList();
+        }
+      } catch (e) {
+        debugPrint('[StatsService] Failed to decode local history for backfill: $e');
+      }
+    }
+
+    if (!payload.containsKey('stats_json') && !payload.containsKey('history_json')) {
+      return;
+    }
+
+    try {
+      await Supabase.instance.client.from(_progressTable).upsert(
+        payload,
+        onConflict: 'user_id',
+      );
+    } catch (e) {
+      debugPrint('[StatsService] Local backfill failed: $e');
+    }
+  }
+
   /// Get session history
   Future<List<SessionRecord>> getSessionHistory() async {
     final data = await _storage.read(key: _historyKey);

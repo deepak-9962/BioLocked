@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../ui/theme/luxury_theme.dart';
+import '../../ui/theme/bio_theme.dart';
 
 class OverlayLockWidget extends StatelessWidget {
   const OverlayLockWidget({super.key});
@@ -12,7 +12,7 @@ class OverlayLockWidget extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          color: LuxuryColors.richBlack.withAlpha(240), // Dark blocking background
+          color: BioColors.background.withAlpha(240), // Dark blocking background
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -20,14 +20,14 @@ class OverlayLockWidget extends StatelessWidget {
           children: [
             const Icon(
               Icons.lock,
-              color: LuxuryColors.rubyRed,
+              color: BioColors.red500,
               size: 80,
             ),
             const SizedBox(height: 32),
             Text(
               'SESSION IN PROGRESS',
-              style: LuxuryTextStyles.heroTitle.copyWith(
-                color: LuxuryColors.rubyRed,
+              style: BioTextStyles.headlineLg.copyWith(
+                color: BioColors.red500,
                 fontSize: 24,
                 letterSpacing: 4,
               ),
@@ -36,8 +36,8 @@ class OverlayLockWidget extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Your focus is locked.\nReturn to Bio-Locked to continue or terminate the session.',
-              style: LuxuryTextStyles.bodyLarge.copyWith(
-                color: LuxuryColors.textSecondary,
+              style: BioTextStyles.bodyLg.copyWith(
+                color: BioColors.onSurfaceVariant,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
