@@ -6,7 +6,7 @@ import '../features/session/session_provider.dart';
 import '../features/session/session_completion.dart';
 import '../features/audio/sound_service.dart';
 import '../features/level/level_service.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 import 'share_card_dialog.dart';
 import 'level_badge.dart';
 
@@ -52,10 +52,10 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
         speed: 0.3 + random.nextDouble() * 0.5,
         size: 4 + random.nextDouble() * 8,
         color: [
-          LuxuryColors.burnishedGold,
-          LuxuryColors.platinumBlue,
-          LuxuryColors.emerald,
-          LuxuryColors.champagneGold,
+          BioColors.primaryFixed,
+          BioColors.blue400,
+          BioColors.green500,
+          BioColors.orange500,
         ][random.nextInt(4)],
       ));
     }
@@ -84,7 +84,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
     final completionAsync = ref.watch(completedSessionFeedbackProvider);
 
     return Scaffold(
-      backgroundColor: LuxuryColors.richBlack,
+      backgroundColor: BioColors.background,
       body: Stack(
         children: [
           // Background gradient
@@ -94,8 +94,8 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 center: Alignment.topCenter,
                 radius: 1.5,
                 colors: [
-                  LuxuryColors.emerald.withValues(alpha: 0.2),
-                  LuxuryColors.richBlack,
+                  BioColors.green500.withValues(alpha: 0.2),
+                  BioColors.background,
                 ],
               ),
             ),
@@ -122,7 +122,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 if (data == null) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      color: LuxuryColors.platinumBlue,
+                      color: BioColors.primaryFixed,
                       strokeWidth: 2,
                     ),
                   );
@@ -163,16 +163,23 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: LuxuryGradients.emeraldGlow,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                BioColors.green500,
+                                BioColors.green500.withValues(alpha: 0.7),
+                              ],
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: LuxuryColors.emerald.withValues(alpha: 0.5),
+                                color: BioColors.green500.withValues(alpha: 0.5),
                                 blurRadius: 50,
                                 spreadRadius: 10,
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.check_rounded,
                             size: 64,
                             color: Colors.white,
@@ -185,13 +192,13 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                       ShaderMask(
                         shaderCallback: (bounds) => LinearGradient(
                           colors: [
-                            LuxuryColors.emerald,
-                            LuxuryColors.platinumBlue,
+                            BioColors.primaryFixed,
+                            BioColors.green500,
                           ],
                         ).createShader(bounds),
                         child: Text(
                           'COMPLETE',
-                          style: LuxuryTextStyles.displayLarge.copyWith(
+                          style: BioTextStyles.headlineXl.copyWith(
                             color: Colors.white,
                             letterSpacing: 8,
                           ),
@@ -206,16 +213,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: LuxuryColors.cardBackground,
+                          borderRadius: BorderRadius.circular(8),
+                          color: BioColors.cardBg,
                           border: Border.all(
-                            color: LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+                            color: BioColors.primaryFixed.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
                           taskName.toUpperCase(),
-                          style: LuxuryTextStyles.labelLarge.copyWith(
-                            color: LuxuryColors.burnishedGold,
+                          style: BioTextStyles.labelCaps.copyWith(
+                            color: BioColors.primaryFixed,
                             letterSpacing: 2,
                           ),
                         ),
@@ -228,8 +235,8 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                         child: Text(
                           data.completionMessage,
                           textAlign: TextAlign.center,
-                          style: LuxuryTextStyles.bodyLarge.copyWith(
-                            color: LuxuryColors.textPrimary,
+                          style: BioTextStyles.bodyLg.copyWith(
+                            color: BioColors.onSurface,
                             height: 1.6,
                           ),
                         ),
@@ -269,7 +276,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                               icon: Icons.local_fire_department,
                               value: '${data.stats.currentStreak}',
                               label: 'Day Streak',
-                              color: LuxuryColors.burnishedGold,
+                              color: BioColors.orange500,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -278,7 +285,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                               icon: Icons.access_time,
                               value: '${data.stats.totalMinutes ~/ 60}h',
                               label: 'Total Focus',
-                              color: LuxuryColors.platinumBlue,
+                              color: BioColors.blue400,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -287,7 +294,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                               icon: Icons.check_circle,
                               value: '${data.stats.totalSessions}',
                               label: 'Sessions',
-                              color: LuxuryColors.emerald,
+                              color: BioColors.green500,
                             ),
                           ),
                         ],
@@ -311,28 +318,28 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                LuxuryColors.burnishedGold.withValues(alpha: 0.15),
-                                LuxuryColors.platinumBlue.withValues(alpha: 0.1),
+                                BioColors.primaryFixed.withValues(alpha: 0.15),
+                                BioColors.blue400.withValues(alpha: 0.1),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: LuxuryColors.burnishedGold.withValues(alpha: 0.4),
+                              color: BioColors.primaryFixed.withValues(alpha: 0.4),
                             ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.share_rounded,
-                                color: LuxuryColors.burnishedGold,
+                                color: BioColors.primaryFixed,
                                 size: 22,
                               ),
                               const SizedBox(width: 10),
                               Text(
                                 'Share Achievement',
-                                style: LuxuryTextStyles.labelLarge.copyWith(
-                                  color: LuxuryColors.burnishedGold,
+                                style: BioTextStyles.labelCaps.copyWith(
+                                  color: BioColors.primaryFixed,
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -355,15 +362,15 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                             padding: const EdgeInsets.all(16),
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                               gradient: LinearGradient(
                                 colors: [
-                                  LuxuryColors.platinumBlue.withValues(alpha: 0.2),
-                                  LuxuryColors.burnishedGold.withValues(alpha: 0.1),
+                                  BioColors.blue400.withValues(alpha: 0.2),
+                                  BioColors.primaryFixed.withValues(alpha: 0.1),
                                 ],
                               ),
                               border: Border.all(
-                                color: LuxuryColors.platinumBlue.withValues(alpha: 0.4),
+                                color: BioColors.blue400.withValues(alpha: 0.4),
                               ),
                             ),
                             child: Row(
@@ -372,11 +379,11 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: LuxuryColors.platinumBlue.withValues(alpha: 0.2),
+                                    color: BioColors.blue400.withValues(alpha: 0.2),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.auto_awesome,
-                                    color: LuxuryColors.platinumBlue,
+                                    color: BioColors.blue400,
                                     size: 24,
                                   ),
                                 ),
@@ -387,16 +394,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                                     children: [
                                       Text(
                                         'Enable Full Checkpoints',
-                                        style: LuxuryTextStyles.titleLarge.copyWith(
-                                          color: LuxuryColors.platinumBlue,
+                                        style: BioTextStyles.headlineLg.copyWith(
+                                          color: BioColors.blue400,
                                           fontSize: 15,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
                                         'Turn off demo mode for full checkpoint enforcement',
-                                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                                          color: LuxuryColors.textSecondary,
+                                        style: BioTextStyles.bodyMd.copyWith(
+                                          color: BioColors.onSurfaceVariant,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -405,7 +412,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                                 ),
                                 Icon(
                                   Icons.arrow_forward_ios,
-                                  color: LuxuryColors.platinumBlue.withValues(alpha: 0.6),
+                                  color: BioColors.blue400.withValues(alpha: 0.6),
                                   size: 16,
                                 ),
                               ],
@@ -423,11 +430,11 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           decoration: BoxDecoration(
-                            gradient: LuxuryGradients.emeraldGlow,
-                            borderRadius: BorderRadius.circular(20),
+                            color: BioColors.primaryFixed,
+                            borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: LuxuryColors.emerald.withValues(alpha: 0.4),
+                                color: BioColors.primaryFixed.withValues(alpha: 0.4),
                                 blurRadius: 24,
                                 offset: const Offset(0, 8),
                               ),
@@ -436,16 +443,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.add,
-                                color: Colors.white,
+                                color: BioColors.onPrimaryFixed,
                                 size: 24,
                               ),
                               const SizedBox(width: 12),
                               Text(
                                 'NEW SESSION',
-                                style: LuxuryTextStyles.labelLarge.copyWith(
-                                  color: Colors.white,
+                                style: BioTextStyles.labelCaps.copyWith(
+                                  color: BioColors.onPrimaryFixed,
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -463,15 +470,15 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
-                      color: LuxuryColors.emerald,
+                    const CircularProgressIndicator(
+                      color: BioColors.primaryFixed,
                       strokeWidth: 3,
                     ),
                     const SizedBox(height: 24),
                     Text(
                       'Processing your achievement...',
-                      style: LuxuryTextStyles.bodyMedium.copyWith(
-                        color: LuxuryColors.textSecondary,
+                      style: BioTextStyles.bodyMd.copyWith(
+                        color: BioColors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -495,14 +502,14 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: LuxuryColors.cardBackground,
+                      color: BioColors.surfaceContainerHigh,
                       border: Border.all(
-                        color: LuxuryColors.subtleBorder,
+                        color: BioColors.outlineVariant,
                       ),
                     ),
                     child: const Icon(
                       Icons.arrow_back,
-                      color: LuxuryColors.textPrimary,
+                      color: BioColors.onSurface,
                       size: 20,
                     ),
                   ),
@@ -517,16 +524,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
 
   Widget _buildFrostedCard({required Widget child}) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: LuxuryGradients.frostedGlass,
-            borderRadius: BorderRadius.circular(20),
+            color: BioColors.surfaceContainerHigh.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: LuxuryColors.platinumBlue.withValues(alpha: 0.2),
+              color: BioColors.blue400.withValues(alpha: 0.2),
             ),
           ),
           child: child,
@@ -539,17 +546,17 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+            color: BioColors.primaryFixed.withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: -5,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
@@ -557,13 +564,13 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  LuxuryColors.burnishedGold.withValues(alpha: 0.25),
-                  LuxuryColors.burnishedGold.withValues(alpha: 0.1),
+                  BioColors.primaryFixed.withValues(alpha: 0.25),
+                  BioColors.primaryFixed.withValues(alpha: 0.1),
                 ],
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: LuxuryColors.burnishedGold.withValues(alpha: 0.5),
+                color: BioColors.primaryFixed.withValues(alpha: 0.5),
               ),
             ),
             child: Row(
@@ -572,11 +579,11 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: LuxuryColors.burnishedGold.withValues(alpha: 0.2),
+                    color: BioColors.primaryFixed.withValues(alpha: 0.2),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.emoji_events,
-                    color: LuxuryColors.burnishedGold,
+                    color: BioColors.primaryFixed,
                     size: 28,
                   ),
                 ),
@@ -584,8 +591,8 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 Expanded(
                   child: Text(
                     announcement,
-                    style: LuxuryTextStyles.bodyLarge.copyWith(
-                      color: LuxuryColors.champagneGold,
+                    style: BioTextStyles.bodyLg.copyWith(
+                      color: BioColors.primaryFixed,
                       fontWeight: FontWeight.w600,
                       height: 1.4,
                     ),
@@ -606,14 +613,14 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
     required Color color,
   }) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(8),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: color.withValues(alpha: 0.3),
             ),
@@ -624,16 +631,17 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
               const SizedBox(height: 8),
               Text(
                 value,
-                style: LuxuryTextStyles.titleLarge.copyWith(
+                style: BioTextStyles.headlineLg.copyWith(
                   color: color,
                   fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 label,
-                style: LuxuryTextStyles.bodyMedium.copyWith(
-                  color: LuxuryColors.textSecondary,
+                style: BioTextStyles.bodyMd.copyWith(
+                  color: BioColors.onSurfaceVariant,
                   fontSize: 11,
                 ),
               ),
@@ -660,19 +668,19 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              LuxuryColors.burnishedGold.withValues(alpha: 0.2),
-              LuxuryColors.burnishedGold.withValues(alpha: 0.1),
+              BioColors.primaryFixed.withValues(alpha: 0.2),
+              BioColors.primaryFixed.withValues(alpha: 0.1),
             ],
           ),
           border: Border.all(
-            color: LuxuryColors.burnishedGold.withValues(alpha: 0.4),
+            color: BioColors.primaryFixed.withValues(alpha: 0.4),
           ),
           boxShadow: [
             BoxShadow(
-              color: LuxuryColors.burnishedGold.withValues(alpha: 0.2),
+              color: BioColors.primaryFixed.withValues(alpha: 0.2),
               blurRadius: 15,
               spreadRadius: -5,
             ),
@@ -685,12 +693,12 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: LuxuryColors.burnishedGold.withValues(alpha: 0.2),
+                color: BioColors.primaryFixed.withValues(alpha: 0.2),
               ),
               child: Text(
                 'LV${result.newLevel}',
-                style: TextStyle(
-                  color: LuxuryColors.burnishedGold,
+                style: const TextStyle(
+                  color: BioColors.primaryFixed,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
@@ -703,8 +711,8 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
               children: [
                 Text(
                   '+${result.xpEarned} XP',
-                  style: LuxuryTextStyles.titleLarge.copyWith(
-                    color: LuxuryColors.burnishedGold,
+                  style: BioTextStyles.headlineLg.copyWith(
+                    color: BioColors.primaryFixed,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -718,7 +726,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                         height: 4,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(2),
-                          color: LuxuryColors.cardBackground,
+                          color: BioColors.cardBg,
                         ),
                       ),
                       FractionallySizedBox(
@@ -727,7 +735,7 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                           height: 4,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
-                            gradient: LuxuryGradients.goldShimmer,
+                            color: BioColors.primaryFixed,
                           ),
                         ),
                       ),
@@ -742,12 +750,12 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: LuxuryColors.emerald.withValues(alpha: 0.2),
+                  color: BioColors.green500.withValues(alpha: 0.2),
                 ),
-                child: Text(
+                child: const Text(
                   'LEVEL UP!',
                   style: TextStyle(
-                    color: LuxuryColors.emerald,
+                    color: BioColors.green500,
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
                     letterSpacing: 1,
@@ -770,16 +778,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LuxuryGradients.emeraldGlow,
+              color: BioColors.green500,
               boxShadow: [
                 BoxShadow(
-                  color: LuxuryColors.emerald.withValues(alpha: 0.5),
+                  color: BioColors.green500.withValues(alpha: 0.5),
                   blurRadius: 50,
                   spreadRadius: 10,
                 ),
               ],
             ),
-            child: Icon(
+            child: const Icon(
               Icons.check_rounded,
               size: 64,
               color: Colors.white,
@@ -788,16 +796,16 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
           const SizedBox(height: 32),
           Text(
             'SESSION COMPLETE',
-            style: LuxuryTextStyles.headlineLarge.copyWith(
-              color: LuxuryColors.emerald,
+            style: BioTextStyles.headlineLg.copyWith(
+              color: BioColors.green500,
               letterSpacing: 4,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             taskName.toUpperCase(),
-            style: LuxuryTextStyles.bodyLarge.copyWith(
-              color: LuxuryColors.textSecondary,
+            style: BioTextStyles.bodyLg.copyWith(
+              color: BioColors.onSurfaceVariant,
               letterSpacing: 2,
             ),
           ),
@@ -809,11 +817,11 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 18),
               decoration: BoxDecoration(
-                gradient: LuxuryGradients.emeraldGlow,
-                borderRadius: BorderRadius.circular(20),
+                color: BioColors.primaryFixed,
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: LuxuryColors.emerald.withValues(alpha: 0.4),
+                    color: BioColors.primaryFixed.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -821,8 +829,8 @@ class _FinishedScreenState extends ConsumerState<FinishedScreen>
               ),
               child: Text(
                 'NEW SESSION',
-                style: LuxuryTextStyles.labelLarge.copyWith(
-                  color: Colors.white,
+                style: BioTextStyles.labelCaps.copyWith(
+                  color: BioColors.onPrimaryFixed,
                   letterSpacing: 2,
                 ),
               ),

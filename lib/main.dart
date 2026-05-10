@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/session/session_provider.dart';
 import 'features/notifications/notification_service.dart';
 import 'features/grayscale/grayscale_service.dart';
+import 'features/stats/stats_service.dart';
+import 'features/level/level_service.dart';
 import 'ui/check_in_screen.dart';
 import 'ui/tunnel_setup_screen.dart';
 import 'ui/in_progress_screen.dart';
@@ -12,8 +14,7 @@ import 'ui/recovery_screen.dart';
 import 'ui/finished_screen.dart';
 import 'ui/micro_wins_screen.dart';
 import 'ui/history_screen.dart';
-import 'ui/theme/luxury_theme.dart';
-import 'ui/theme/web_app_theme.dart';
+import 'ui/theme/bio_theme.dart';
 import 'ui/app_settings_screen.dart';
 import 'ui/auth_screen.dart';
 import 'ui/widgets/overlay_lock_widget.dart';
@@ -40,7 +41,7 @@ void main() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: LuxuryColors.richBlack,
+      systemNavigationBarColor: BioColors.background,
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
@@ -106,8 +107,10 @@ class _BioLockedAppState extends ConsumerState<BioLockedApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.read(sessionStateProvider.notifier).setCheckIn();
+      await ref.read(statsServiceProvider).backfillLocalToRemote();
+      await ref.read(levelServiceProvider).backfillLocalToRemote();
     });
   }
 
@@ -190,27 +193,7 @@ class _BioLockedAppState extends ConsumerState<BioLockedApp>
     Widget app = MaterialApp(
       title: 'Bio-Locked',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: WebAppColors.blue,
-        scaffoldBackgroundColor: WebAppColors.background,
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-        colorScheme: ColorScheme.dark(
-          primary: WebAppColors.blue,
-          secondary: WebAppColors.cream,
-          surface: const Color(0xFF18161D),
-          error: WebAppColors.red,
-        ),
-        textTheme: TextTheme(
-          displayLarge: LuxuryTextStyles.displayLarge,
-          headlineLarge: LuxuryTextStyles.headlineLarge,
-          titleLarge: LuxuryTextStyles.titleLarge,
-          bodyLarge: LuxuryTextStyles.bodyLarge,
-          bodyMedium: LuxuryTextStyles.bodyMedium,
-          labelLarge: LuxuryTextStyles.labelLarge,
-        ),
-      ),
+      theme: buildBioTheme(),
       home: switch (sessionState) {
         SessionState.idle =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),

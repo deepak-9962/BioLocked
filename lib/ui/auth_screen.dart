@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'theme/web_app_theme.dart';
+import 'theme/bio_theme.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -77,55 +77,100 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true),
-      home: WebAppScaffold(
+    return Scaffold(
+      backgroundColor: BioColors.background,
+      body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 34, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('BIO-LOCKED', style: WebAppText.brand),
+              Text(
+                'BIO-LOCKED',
+                style: BioTextStyles.labelCaps.copyWith(
+                  color: BioColors.primaryFixed,
+                  fontSize: 13,
+                  letterSpacing: 4,
+                ),
+              ),
               const SizedBox(height: 48),
-              const Text(
+              Text(
                 'Sign in to sync your focus life across Android and web.',
-                style: WebAppText.title,
+                style: BioTextStyles.headlineLg.copyWith(
+                  color: Colors.white,
+                  fontSize: 28,
+                ),
               ),
               const SizedBox(height: 18),
-              const Text(
+              Text(
                 'Your phone stays the strict lock engine. The web dashboard keeps sessions, streaks, coins, presets, and schedules visible from the same account.',
-                style: WebAppText.body,
+                style: BioTextStyles.bodyMd.copyWith(
+                  color: BioColors.onSurfaceVariant,
+                  fontSize: 15,
+                  height: 1.55,
+                ),
               ),
               const SizedBox(height: 34),
-              WebCard(
+              Container(
                 padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: BioColors.surface,
+                  border: Border.all(color: BioColors.outlineVariant.withValues(alpha: 0.3)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text('Account access', style: WebAppText.sectionTitle),
+                    Text(
+                      'Account access',
+                      style: BioTextStyles.headlineLg.copyWith(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Use the same email, password, or Google account on Android and web.',
-                      style: WebAppText.body,
+                      style: BioTextStyles.bodyMd.copyWith(
+                        color: BioColors.onSurfaceVariant,
+                      ),
                     ),
                     if (_message != null) ...[
                       const SizedBox(height: 16),
-                      WebCard(
-                        backgroundColor: WebAppColors.gold.withValues(alpha: 0.1),
-                        borderColor: WebAppColors.gold.withValues(alpha: 0.3),
+                      Container(
                         padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: BioColors.primaryFixed.withValues(alpha: 0.1),
+                          border: Border.all(
+                            color: BioColors.primaryFixed.withValues(alpha: 0.3),
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Text(
                           _message!,
-                          style: const TextStyle(color: Color(0xFFF3D98A)),
+                          style: TextStyle(color: BioColors.primaryFixed.withValues(alpha: 0.9)),
                         ),
                       ),
                     ],
                     const SizedBox(height: 20),
-                    WebSecondaryButton(
-                      label: 'Continue with Google',
-                      icon: Icons.g_mobiledata,
-                      onPressed: _isLoading ? null : _signInWithGoogle,
+                    // Google button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _isLoading ? null : _signInWithGoogle,
+                        icon: const Icon(Icons.g_mobiledata, size: 18),
+                        label: const Text('Continue with Google'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: BioColors.onSurface,
+                          side: BorderSide(color: BioColors.outlineVariant.withValues(alpha: 0.5)),
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const _DividerLabel(label: 'EMAIL'),
@@ -142,10 +187,26 @@ class _AuthScreenState extends State<AuthScreen> {
                       obscureText: true,
                     ),
                     const SizedBox(height: 20),
-                    WebPrimaryButton(
-                      label: _isSignUp ? 'Create account' : 'Sign in',
-                      icon: _isSignUp ? Icons.person_add_alt : Icons.login,
-                      onPressed: _isLoading ? null : _submit,
+                    // Primary submit button
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: _isLoading ? null : _submit,
+                        icon: Icon(_isSignUp ? Icons.person_add_alt : Icons.login, size: 18),
+                        label: Text(_isSignUp ? 'Create account' : 'Sign in'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: BioColors.primaryFixed,
+                          foregroundColor: BioColors.onPrimaryFixed,
+                          disabledBackgroundColor: BioColors.surfaceContainerHighest,
+                          disabledForegroundColor: BioColors.onSurfaceVariant,
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
@@ -156,7 +217,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         _isSignUp
                             ? 'Already have an account? Sign in'
                             : 'New here? Create an account',
-                        style: const TextStyle(color: WebAppColors.blue),
+                        style: const TextStyle(color: BioColors.blue400),
                       ),
                     ),
                   ],
@@ -179,23 +240,23 @@ class _AuthScreenState extends State<AuthScreen> {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: const TextStyle(color: WebAppColors.text),
+      style: const TextStyle(color: BioColors.onSurface),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: WebAppColors.textMuted),
+        labelStyle: const TextStyle(color: BioColors.onSurfaceVariant),
         filled: true,
         fillColor: Colors.black.withValues(alpha: 0.24),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: WebAppColors.border),
+          borderSide: const BorderSide(color: BioColors.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: WebAppColors.border),
+          borderSide: const BorderSide(color: BioColors.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: WebAppColors.blue),
+          borderSide: const BorderSide(color: BioColors.blue400),
         ),
       ),
     );
@@ -211,20 +272,20 @@ class _DividerLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: WebAppColors.border)),
+        const Expanded(child: Divider(color: BioColors.outlineVariant)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             label,
             style: const TextStyle(
-              color: WebAppColors.textFaint,
+              color: BioColors.onSurfaceVariant,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 2.5,
             ),
           ),
         ),
-        const Expanded(child: Divider(color: WebAppColors.border)),
+        const Expanded(child: Divider(color: BioColors.outlineVariant)),
       ],
     );
   }

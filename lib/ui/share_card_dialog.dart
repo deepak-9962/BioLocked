@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/share/share_card_service.dart';
 import '../features/stats/stats_service.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 
 /// Shows a share card preview dialog with download/share options
 class ShareCardDialog extends ConsumerStatefulWidget {
@@ -65,16 +65,16 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
           decoration: BoxDecoration(
-            color: LuxuryColors.cardBackground.withValues(alpha: 0.95),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            color: BioColors.cardBg.withValues(alpha: 0.95),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             border: Border.all(
-              color: LuxuryColors.burnishedGold.withValues(alpha: 0.2),
+              color: BioColors.primaryFixed.withValues(alpha: 0.2),
             ),
           ),
           child: Column(
@@ -85,7 +85,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: LuxuryColors.textTertiary.withValues(alpha: 0.3),
+                  color: BioColors.onSurfaceVariant.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -96,13 +96,13 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
               ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
                   colors: [
-                    LuxuryColors.burnishedGold,
-                    LuxuryColors.champagneGold,
+                    BioColors.primaryFixed,
+                    BioColors.green500,
                   ],
                 ).createShader(bounds),
                 child: Text(
                   'SHARE YOUR ACHIEVEMENT',
-                  style: LuxuryTextStyles.labelLarge.copyWith(
+                  style: BioTextStyles.labelCaps.copyWith(
                     color: Colors.white,
                     letterSpacing: 2,
                   ),
@@ -130,25 +130,25 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: LuxuryColors.emerald.withValues(alpha: 0.1),
+                    color: BioColors.green500.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: LuxuryColors.emerald.withValues(alpha: 0.3),
+                      color: BioColors.green500.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
-                        color: LuxuryColors.emerald,
+                        color: BioColors.green500,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Saved! Find it in your app files.',
-                          style: LuxuryTextStyles.bodyMedium.copyWith(
-                            color: LuxuryColors.emerald,
+                          style: BioTextStyles.bodyMd.copyWith(
+                            color: BioColors.green500,
                           ),
                         ),
                       ),
@@ -167,12 +167,12 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(
           colors: [
-            LuxuryColors.burnishedGold.withValues(alpha: 0.5),
-            LuxuryColors.platinumBlue.withValues(alpha: 0.3),
-            LuxuryColors.burnishedGold.withValues(alpha: 0.5),
+            BioColors.primaryFixed.withValues(alpha: 0.5),
+            BioColors.blue400.withValues(alpha: 0.3),
+            BioColors.primaryFixed.withValues(alpha: 0.5),
           ],
         ),
       ),
@@ -180,10 +180,10 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(10),
           color: _isTransparent
               ? Colors.transparent
-              : LuxuryColors.richBlack,
+              : BioColors.background,
           image: _isTransparent
               ? const DecorationImage(
                   image: AssetImage('assets/images/checkerboard.png'),
@@ -197,9 +197,9 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    LuxuryColors.richBlack,
-                    LuxuryColors.cardBackground,
-                    LuxuryColors.richBlack,
+                    BioColors.background,
+                    BioColors.cardBg,
+                    BioColors.background,
                   ],
                 ),
         ),
@@ -208,8 +208,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
             // App branding
             Text(
               'BIO-LOCKED',
-              style: LuxuryTextStyles.labelLarge.copyWith(
-                color: LuxuryColors.burnishedGold,
+              style: BioTextStyles.labelCaps.copyWith(
+                color: BioColors.primaryFixed,
                 letterSpacing: 4,
                 fontSize: 12,
               ),
@@ -222,10 +222,10 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LuxuryGradients.emeraldGlow,
+                color: BioColors.green500,
                 boxShadow: [
                   BoxShadow(
-                    color: LuxuryColors.emerald.withValues(alpha: 0.4),
+                    color: BioColors.green500.withValues(alpha: 0.4),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
@@ -243,9 +243,10 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
             // Task name
             Text(
               widget.taskName.toUpperCase(),
-              style: LuxuryTextStyles.titleLarge.copyWith(
+              style: BioTextStyles.headlineLg.copyWith(
                 color: Colors.white,
                 letterSpacing: 2,
+                fontSize: 18,
               ),
               textAlign: TextAlign.center,
             ),
@@ -255,8 +256,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
             // Duration
             Text(
               '${widget.durationMinutes} min deep work session',
-              style: LuxuryTextStyles.bodyMedium.copyWith(
-                color: LuxuryColors.platinumBlue,
+              style: BioTextStyles.bodyMd.copyWith(
+                color: BioColors.blue400,
               ),
             ),
 
@@ -270,7 +271,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                     icon: Icons.local_fire_department,
                     value: '${widget.stats.currentStreak}',
                     label: 'STREAK',
-                    color: LuxuryColors.burnishedGold,
+                    color: BioColors.orange500,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -279,7 +280,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                     icon: Icons.check_circle,
                     value: '${widget.stats.totalSessions}',
                     label: 'SESSIONS',
-                    color: LuxuryColors.emerald,
+                    color: BioColors.green500,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -288,7 +289,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                     icon: Icons.access_time,
                     value: '${widget.stats.totalMinutes ~/ 60}h',
                     label: 'FOCUS',
-                    color: LuxuryColors.platinumBlue,
+                    color: BioColors.blue400,
                   ),
                 ),
               ],
@@ -299,8 +300,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
             // Date
             Text(
               _formatDate(DateTime.now()),
-              style: LuxuryTextStyles.bodyMedium.copyWith(
-                color: LuxuryColors.textTertiary,
+              style: BioTextStyles.bodyMd.copyWith(
+                color: BioColors.onSurfaceVariant.withValues(alpha: 0.7),
                 fontSize: 11,
               ),
             ),
@@ -320,7 +321,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: color.withValues(alpha: 0.2),
         ),
@@ -331,7 +332,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
           const SizedBox(height: 4),
           Text(
             value,
-            style: LuxuryTextStyles.titleLarge.copyWith(
+            style: BioTextStyles.headlineLg.copyWith(
               color: color,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -340,7 +341,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
           Text(
             label,
             style: TextStyle(
-              color: LuxuryColors.textTertiary,
+              color: BioColors.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: 9,
               letterSpacing: 0.5,
             ),
@@ -354,8 +355,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: LuxuryColors.elevatedSurface,
-        borderRadius: BorderRadius.circular(14),
+        color: BioColors.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -367,12 +368,12 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: _isTransparent
-                      ? LuxuryColors.platinumBlue.withValues(alpha: 0.2)
+                      ? BioColors.blue400.withValues(alpha: 0.2)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   border: _isTransparent
                       ? Border.all(
-                          color: LuxuryColors.platinumBlue.withValues(alpha: 0.4),
+                          color: BioColors.blue400.withValues(alpha: 0.4),
                         )
                       : null,
                 ),
@@ -382,8 +383,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                     Icon(
                       Icons.layers_clear,
                       color: _isTransparent
-                          ? LuxuryColors.platinumBlue
-                          : LuxuryColors.textTertiary,
+                          ? BioColors.blue400
+                          : BioColors.onSurfaceVariant,
                       size: 18,
                     ),
                     const SizedBox(width: 8),
@@ -391,8 +392,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                       'Transparent',
                       style: TextStyle(
                         color: _isTransparent
-                            ? LuxuryColors.platinumBlue
-                            : LuxuryColors.textTertiary,
+                            ? BioColors.blue400
+                            : BioColors.onSurfaceVariant,
                         fontWeight: _isTransparent
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -411,12 +412,12 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: !_isTransparent
-                      ? LuxuryColors.burnishedGold.withValues(alpha: 0.2)
+                      ? BioColors.primaryFixed.withValues(alpha: 0.2)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   border: !_isTransparent
                       ? Border.all(
-                          color: LuxuryColors.burnishedGold.withValues(alpha: 0.4),
+                          color: BioColors.primaryFixed.withValues(alpha: 0.4),
                         )
                       : null,
                 ),
@@ -426,8 +427,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                     Icon(
                       Icons.image,
                       color: !_isTransparent
-                          ? LuxuryColors.burnishedGold
-                          : LuxuryColors.textTertiary,
+                          ? BioColors.primaryFixed
+                          : BioColors.onSurfaceVariant,
                       size: 18,
                     ),
                     const SizedBox(width: 8),
@@ -435,8 +436,8 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                       'With Background',
                       style: TextStyle(
                         color: !_isTransparent
-                            ? LuxuryColors.burnishedGold
-                            : LuxuryColors.textTertiary,
+                            ? BioColors.primaryFixed
+                            : BioColors.onSurfaceVariant,
                         fontWeight: !_isTransparent
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -462,25 +463,25 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: LuxuryColors.platinumBlue.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(14),
+                color: BioColors.blue400.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                  color: BioColors.blue400.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.download_rounded,
-                    color: LuxuryColors.platinumBlue,
+                    color: BioColors.blue400,
                     size: 22,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Download',
-                    style: LuxuryTextStyles.labelLarge.copyWith(
-                      color: LuxuryColors.platinumBlue,
+                    style: BioTextStyles.labelCaps.copyWith(
+                      color: BioColors.blue400,
                     ),
                   ),
                 ],
@@ -504,9 +505,9 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        LuxuryColors.burnishedGold,
-                        LuxuryColors.champagneGold,
-                        LuxuryColors.burnishedGold,
+                        BioColors.primaryFixed,
+                        BioColors.green500,
+                        BioColors.primaryFixed,
                       ],
                       stops: [
                         0.0,
@@ -514,10 +515,10 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                         1.0,
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+                        color: BioColors.primaryFixed.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -529,7 +530,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                             width: 22,
                             height: 22,
                             child: CircularProgressIndicator(
-                              color: LuxuryColors.richBlack,
+                              color: BioColors.onPrimaryFixed,
                               strokeWidth: 2,
                             ),
                           ),
@@ -537,16 +538,16 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.share_rounded,
-                              color: LuxuryColors.richBlack,
+                              color: BioColors.onPrimaryFixed,
                               size: 22,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Share to Social',
-                              style: LuxuryTextStyles.labelLarge.copyWith(
-                                color: LuxuryColors.richBlack,
+                              style: BioTextStyles.labelCaps.copyWith(
+                                color: BioColors.onPrimaryFixed,
                               ),
                             ),
                           ],
@@ -592,7 +593,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save: $e'),
-            backgroundColor: LuxuryColors.ruby,
+            backgroundColor: BioColors.red500,
           ),
         );
       }
@@ -622,7 +623,7 @@ class _ShareCardDialogState extends ConsumerState<ShareCardDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to share: $e'),
-            backgroundColor: LuxuryColors.ruby,
+            backgroundColor: BioColors.red500,
           ),
         );
       }

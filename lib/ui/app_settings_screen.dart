@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../features/settings/app_settings_service.dart';
 import '../features/session/session_provider.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 import 'widgets/shared_bottom_nav_bar.dart';
 
 class AppSettingsScreen extends ConsumerWidget {
@@ -14,95 +14,100 @@ class AppSettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(appSettingsProvider);
 
     return Scaffold(
-      backgroundColor: LuxuryColors.richBlack,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LuxuryGradients.darkBackground,
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context, ref),
-              Expanded(
-                child: settingsAsync.when(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(
-                      color: LuxuryColors.platinumBlue,
+      backgroundColor: BioColors.background,
+      bottomNavigationBar: const SharedBottomNavBar(currentIndex: 3),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── TopAppBar ──────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BioSpacing.marginMain,
+                vertical: 16,
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      } else {
+                        ref.read(sessionStateProvider.notifier).setCheckIn();
+                      }
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: BioColors.surfaceContainerHigh,
+                        border: Border.all(color: BioColors.outlineVariant),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: BioColors.onSurfaceVariant,
+                        size: 20,
+                      ),
                     ),
                   ),
-                  error: (err, stack) => Center(
-                    child: Text('Error loading settings: $err',
-                        style: const TextStyle(color: LuxuryColors.rubyRed)),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'APP SETTINGS',
+                        style: BioTextStyles.headlineLg.copyWith(
+                          letterSpacing: 6.4,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
                   ),
-                  data: (settings) => ListView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    children: [
-                      _buildSessionDefaultsSection(ref, settings),
-                      const SizedBox(height: 16),
-                      _buildLockBehaviorSection(ref, settings),
-                      const SizedBox(height: 16),
-                      _buildEconomySection(ref, settings),
-                      const SizedBox(height: 16),
-                      _buildAppPersonaSection(ref, settings),
-                      const SizedBox(height: 16),
-                      _buildAccountSection(context),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: const SharedBottomNavBar(currentIndex: 3),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                ref.read(sessionStateProvider.notifier).setCheckIn();
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: LuxuryColors.cardBackground,
-                border: Border.all(color: LuxuryColors.subtleBorder),
-              ),
-              child: const Icon(
-                Icons.arrow_back,
-                color: LuxuryColors.textPrimary,
-                size: 20,
+                  const SizedBox(width: 40), // Spacer for centering
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Text(
-            'APP SETTINGS',
-            style: LuxuryTextStyles.headlineLarge.copyWith(letterSpacing: 3),
-          ),
-        ],
+            // ── Content ────────────────────────────────────────────────
+            Expanded(
+              child: settingsAsync.when(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: BioColors.primaryFixed),
+                ),
+                error: (err, _) => Center(
+                  child: Text('Error: $err', style: const TextStyle(color: BioColors.error)),
+                ),
+                data: (settings) => ListView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BioSpacing.marginMain,
+                    vertical: 16,
+                  ),
+                  children: [
+                    _buildSessionDefaultsSection(ref, settings),
+                    const SizedBox(height: BioSpacing.stackGap),
+                    _buildLockBehaviorSection(ref, settings),
+                    const SizedBox(height: BioSpacing.stackGap),
+                    _buildEconomySection(ref, settings),
+                    const SizedBox(height: BioSpacing.stackGap),
+                    _buildAppPersonaSection(ref, settings),
+                    const SizedBox(height: BioSpacing.stackGap),
+                    _buildAccountSection(context),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-
   // ─── Session Defaults ──────────────────────────────────────────────────────
+
   Widget _buildSessionDefaultsSection(WidgetRef ref, AppSettings settings) {
     return _SettingsSection(
       title: 'SESSION DEFAULTS',
       icon: Icons.tune,
-      iconColor: LuxuryColors.emerald,
+      iconColor: BioColors.primaryFixed,
       children: [
         _SettingsSlider(
           title: 'Default Duration (mins)',
@@ -114,6 +119,7 @@ class AppSettingsScreen extends ConsumerWidget {
               .read(appSettingsProvider.notifier)
               .updateSettings((s) => s.copyWith(defaultDurationMinutes: val.toInt())),
         ),
+        const _SettingsDivider(),
         _SettingsDropdown<String>(
           title: 'Default Lock Level',
           value: settings.defaultLockLevel,
@@ -130,6 +136,7 @@ class AppSettingsScreen extends ConsumerWidget {
             }
           },
         ),
+        const _SettingsDivider(),
         _SettingsSwitch(
           title: 'Default Destruction Mode',
           subtitle: 'Resets progress on failure',
@@ -143,11 +150,12 @@ class AppSettingsScreen extends ConsumerWidget {
   }
 
   // ─── Lock Behavior ─────────────────────────────────────────────────────────
+
   Widget _buildLockBehaviorSection(WidgetRef ref, AppSettings settings) {
     return _SettingsSection(
       title: 'LOCK BEHAVIOR',
       icon: Icons.lock_outline,
-      iconColor: LuxuryColors.rubyRed,
+      iconColor: BioColors.error,
       children: [
         _SettingsSlider(
           title: 'Soft Grace Period (s)',
@@ -159,6 +167,7 @@ class AppSettingsScreen extends ConsumerWidget {
               .read(appSettingsProvider.notifier)
               .updateSettings((s) => s.copyWith(softGraceSeconds: val.toInt())),
         ),
+        const _SettingsDivider(),
         _SettingsSlider(
           title: 'Standard Grace Period (s)',
           value: settings.standardGraceSeconds.toDouble(),
@@ -169,46 +178,41 @@ class AppSettingsScreen extends ConsumerWidget {
               .read(appSettingsProvider.notifier)
               .updateSettings((s) => s.copyWith(standardGraceSeconds: val.toInt())),
         ),
-        _SettingsSlider(
-          title: 'Hard Grace Period (s)',
-          value: settings.hardGraceSeconds.toDouble(),
-          min: 1,
-          max: 15,
-          divisions: 14,
-          onChanged: (val) => ref
-              .read(appSettingsProvider.notifier)
-              .updateSettings((s) => s.copyWith(hardGraceSeconds: val.toInt())),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Divider(color: LuxuryColors.subtleBorder),
-        ),
-        _SettingsSwitch(
-          title: 'Enable Grayscale',
-          subtitle: 'During active sessions',
-          value: settings.grayscaleOnSession,
-          onChanged: (val) => ref
-              .read(appSettingsProvider.notifier)
-              .updateSettings((s) => s.copyWith(grayscaleOnSession: val)),
-        ),
-        _SettingsSwitch(
-          title: 'Enable DND',
-          subtitle: 'Do Not Disturb during sessions',
-          value: settings.dndOnSession,
-          onChanged: (val) => ref
-              .read(appSettingsProvider.notifier)
-              .updateSettings((s) => s.copyWith(dndOnSession: val)),
+        const _SettingsDivider(),
+        // Hard Grace Period - display only (as in the HTML)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Opacity(
+            opacity: 0.5,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Hard Grace Period (s)',
+                  style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+                ),
+                Text(
+                  '${settings.hardGraceSeconds}',
+                  style: BioTextStyles.statDisplay.copyWith(
+                    fontSize: 24,
+                    color: BioColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
   }
 
   // ─── Economy ───────────────────────────────────────────────────────────────
+
   Widget _buildEconomySection(WidgetRef ref, AppSettings settings) {
     return _SettingsSection(
       title: 'ECONOMY',
       icon: Icons.monetization_on_outlined,
-      iconColor: LuxuryColors.burnishedGold,
+      iconColor: BioColors.primaryFixed,
       children: [
         _SettingsSwitch(
           title: 'Enable Coins Economy',
@@ -218,6 +222,7 @@ class AppSettingsScreen extends ConsumerWidget {
               .updateSettings((s) => s.copyWith(coinsEnabled: val)),
         ),
         if (settings.coinsEnabled) ...[
+          const _SettingsDivider(),
           _SettingsSlider(
             title: 'Coins per Minute',
             value: settings.coinsPerMinute.toDouble(),
@@ -228,6 +233,7 @@ class AppSettingsScreen extends ConsumerWidget {
                 .read(appSettingsProvider.notifier)
                 .updateSettings((s) => s.copyWith(coinsPerMinute: val.toInt())),
           ),
+          const _SettingsDivider(),
           _SettingsSlider(
             title: 'Perfect Session Bonus',
             value: settings.perfectSessionBonus.toDouble(),
@@ -244,11 +250,12 @@ class AppSettingsScreen extends ConsumerWidget {
   }
 
   // ─── App Persona ───────────────────────────────────────────────────────────
+
   Widget _buildAppPersonaSection(WidgetRef ref, AppSettings settings) {
     return _SettingsSection(
       title: 'APP PERSONA',
       icon: Icons.face,
-      iconColor: LuxuryColors.amethystLight,
+      iconColor: BioColors.primaryFixed,
       children: [
         _SettingsTextField(
           title: 'App Name',
@@ -258,6 +265,7 @@ class AppSettingsScreen extends ConsumerWidget {
               .read(appSettingsProvider.notifier)
               .updateSettings((s) => s.copyWith(appName: val)),
         ),
+        const _SettingsDivider(),
         _SettingsSwitch(
           title: 'Sound Effects',
           value: settings.soundEnabled,
@@ -265,6 +273,7 @@ class AppSettingsScreen extends ConsumerWidget {
               .read(appSettingsProvider.notifier)
               .updateSettings((s) => s.copyWith(soundEnabled: val)),
         ),
+        const _SettingsDivider(),
         _SettingsSwitch(
           title: 'Haptic Feedback',
           value: settings.hapticEnabled,
@@ -282,25 +291,23 @@ class AppSettingsScreen extends ConsumerWidget {
     return _SettingsSection(
       title: 'ACCOUNT',
       icon: Icons.person_outline,
-      iconColor: LuxuryColors.platinumBlue,
+      iconColor: BioColors.blue400,
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
                 email,
-                style: LuxuryTextStyles.bodyMedium.copyWith(
-                  color: LuxuryColors.textSecondary,
-                ),
+                style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurfaceVariant),
               ),
             ),
             TextButton(
               onPressed: () async {
                 await Supabase.instance.client.auth.signOut();
               },
-              child: const Text(
+              child: Text(
                 'Sign out',
-                style: TextStyle(color: LuxuryColors.rubyRed),
+                style: BioTextStyles.bodyMd.copyWith(color: BioColors.error),
               ),
             ),
           ],
@@ -311,6 +318,15 @@ class AppSettingsScreen extends ConsumerWidget {
 }
 
 // ─── Reusable UI Components ────────────────────────────────────────────────
+
+class _SettingsDivider extends StatelessWidget {
+  const _SettingsDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(color: BioColors.cardBorder, height: 24);
+  }
+}
 
 class _SettingsSection extends StatelessWidget {
   final String title;
@@ -329,29 +345,37 @@ class _SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: LuxuryColors.cardBackground.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: LuxuryColors.subtleBorder),
+        color: BioColors.cardBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: BioColors.cardBorder),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          // Card Header
+          Container(
+            padding: const EdgeInsets.all(BioSpacing.gutterCard),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: BioColors.cardBorder)),
+            ),
             child: Row(
               children: [
                 Icon(icon, color: iconColor, size: 20),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Text(
                   title,
-                  style: LuxuryTextStyles.labelLarge.copyWith(color: iconColor),
+                  style: BioTextStyles.labelCaps.copyWith(
+                    color: iconColor,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: LuxuryColors.subtleBorder),
+          // Card Content
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(BioSpacing.gutterCard),
             child: Column(children: children),
           ),
         ],
@@ -376,7 +400,7 @@ class _SettingsSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -384,16 +408,33 @@ class _SettingsSwitch extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: LuxuryTextStyles.titleLarge.copyWith(fontSize: 16)),
-                if (subtitle != null)
-                  Text(subtitle!, style: LuxuryTextStyles.bodyMedium),
+                Text(
+                  title,
+                  style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle!,
+                    style: BioTextStyles.bodyMd.copyWith(
+                      fontSize: 14,
+                      color: BioColors.onSurfaceVariant.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: LuxuryColors.burnishedGold,
+          SizedBox(
+            width: 56,
+            height: 28,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Switch(
+                value: value,
+                onChanged: onChanged,
+              ),
+            ),
           ),
         ],
       ),
@@ -420,28 +461,46 @@ class _SettingsSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title, style: LuxuryTextStyles.titleLarge.copyWith(fontSize: 16)),
-              Text(value.toInt().toString(), style: LuxuryTextStyles.bodyMedium),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              title,
+              style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+            ),
+            Text(
+              value.toInt().toString(),
+              style: BioTextStyles.statDisplay.copyWith(
+                fontSize: 24,
+                color: BioColors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 4,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+            activeTrackColor: BioColors.primaryFixed,
+            inactiveTrackColor: BioColors.cardBorder,
+            thumbColor: BioColors.primaryFixed,
+            overlayColor: BioColors.primaryFixed.withValues(alpha: 0.12),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
           ),
-          Slider(
+          child: Slider(
             value: value,
             min: min,
             max: max,
             divisions: divisions,
             onChanged: onChanged,
-            activeColor: LuxuryColors.platinumBlue,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -462,33 +521,36 @@ class _SettingsTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: LuxuryTextStyles.titleLarge.copyWith(fontSize: 16)),
+          Text(
+            title,
+            style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+          ),
           const SizedBox(height: 8),
           TextField(
             controller: TextEditingController(text: value)
               ..selection = TextSelection.fromPosition(
                   TextPosition(offset: value.length)),
-            style: const TextStyle(color: LuxuryColors.textPrimary),
+            style: const TextStyle(color: BioColors.onSurface),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: const TextStyle(color: LuxuryColors.textTertiary),
+              hintStyle: TextStyle(color: BioColors.onSurfaceVariant.withValues(alpha: 0.5)),
               filled: true,
-              fillColor: LuxuryColors.richBlack,
+              fillColor: BioColors.innerBg,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: LuxuryColors.subtleBorder),
+                borderSide: const BorderSide(color: BioColors.cardBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: LuxuryColors.subtleBorder),
+                borderSide: const BorderSide(color: BioColors.cardBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: LuxuryColors.platinumBlue),
+                borderSide: const BorderSide(color: BioColors.primaryFixed),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
@@ -516,26 +578,29 @@ class _SettingsDropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: LuxuryTextStyles.titleLarge.copyWith(fontSize: 16)),
+          Text(
+            title,
+            style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+          ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: LuxuryColors.richBlack,
+              color: BioColors.innerBg,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: LuxuryColors.subtleBorder),
+              border: Border.all(color: BioColors.cardBorder),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
                 value: value,
                 items: items,
                 onChanged: onChanged,
-                dropdownColor: LuxuryColors.cardBackground,
-                style: const TextStyle(color: LuxuryColors.textPrimary),
-                icon: const Icon(Icons.arrow_drop_down, color: LuxuryColors.textSecondary),
+                dropdownColor: BioColors.innerBg,
+                style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurface),
+                icon: const Icon(Icons.arrow_drop_down, color: BioColors.onSurfaceVariant, size: 20),
               ),
             ),
           ),

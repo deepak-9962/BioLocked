@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../theme/luxury_theme.dart';
+import '../theme/bio_theme.dart';
 
 /// Renders a 7-row (days of week) × 24-col (hours) heatmap.
 /// Each cell's intensity shows how many interruptions happened at that day+hour.
@@ -24,11 +24,11 @@ class DistractionHeatmapWidget extends StatelessWidget {
     const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(BioSpacing.gutterCard),
       decoration: BoxDecoration(
-        color: LuxuryColors.cardBackground,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: LuxuryColors.subtleBorder),
+        color: BioColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: BioColors.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,27 +36,15 @@ class DistractionHeatmapWidget extends StatelessWidget {
           // Header
           Row(
             children: [
-              Icon(Icons.thermostat, color: LuxuryColors.rubyRed, size: 18),
+              Icon(Icons.thermostat, color: BioColors.red500, size: 16),
               const SizedBox(width: 8),
               Text(
-                title,
-                style: LuxuryTextStyles.labelLarge.copyWith(
-                  color: LuxuryColors.rubyRed,
-                  letterSpacing: 2,
-                  fontSize: 12,
-                ),
+                'When you get distracted most',
+                style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurfaceVariant),
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            'When you get distracted most',
-            style: LuxuryTextStyles.bodyMedium.copyWith(
-              color: LuxuryColors.textSecondary,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // Hour axis labels
           Padding(
@@ -69,8 +57,8 @@ class DistractionHeatmapWidget extends StatelessWidget {
                         child: Text(
                           h,
                           style: TextStyle(
-                            color: LuxuryColors.textTertiary,
-                            fontSize: 9,
+                            color: BioColors.onSurfaceVariant.withValues(alpha: 0.5),
+                            fontSize: 10,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -84,7 +72,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
           ...List.generate(7, (dayIndex) {
             final weekday = dayIndex + 1;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 3),
               child: Row(
                 children: [
                   // Day label
@@ -93,7 +81,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
                     child: Text(
                       dayLabels[dayIndex],
                       style: TextStyle(
-                        color: LuxuryColors.textSecondary,
+                        color: BioColors.onSurfaceVariant.withValues(alpha: 0.5),
                         fontSize: 10,
                       ),
                     ),
@@ -113,7 +101,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
                                 : '$count interruption${count == 1 ? '' : 's'}',
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 400),
-                              height: 14,
+                              height: 16,
                               margin: const EdgeInsets.all(1),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -130,7 +118,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
             );
           }),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
           // Legend
           Row(
@@ -139,7 +127,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
               Text(
                 'Less',
                 style: TextStyle(
-                  color: LuxuryColors.textTertiary,
+                  color: BioColors.onSurfaceVariant,
                   fontSize: 10,
                 ),
               ),
@@ -159,7 +147,7 @@ class DistractionHeatmapWidget extends StatelessWidget {
               Text(
                 'More',
                 style: TextStyle(
-                  color: LuxuryColors.textTertiary,
+                  color: BioColors.onSurfaceVariant,
                   fontSize: 10,
                 ),
               ),
@@ -172,13 +160,12 @@ class DistractionHeatmapWidget extends StatelessWidget {
 
   Color _cellColor(double intensity) {
     if (intensity == 0) {
-      return LuxuryColors.elevatedSurface;
+      return BioColors.surfaceContainerHighest;
     }
-    // Interpolate from muted amber → bright ruby red
-    return Color.lerp(
-      const Color(0xFF4A2020), // very dark red (low)
-      LuxuryColors.rubyRed,   // bright red (high)
-      intensity,
-    )!;
+    // Red gradient matching the HTML: red-900 → red-700 → red-600 → red-500
+    if (intensity <= 0.25) return BioColors.red900;
+    if (intensity <= 0.50) return BioColors.red800;
+    if (intensity <= 0.75) return BioColors.red700;
+    return BioColors.red500;
   }
 }

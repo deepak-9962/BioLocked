@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/notifications/notification_service.dart';
 import '../features/session/session_provider.dart';
 import 'widgets/shared_bottom_nav_bar.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 
 /// Settings screen for notification preferences
 class NotificationSettingsScreen extends ConsumerStatefulWidget {
@@ -45,11 +45,18 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LuxuryColors.richBlack,
+      backgroundColor: BioColors.background,
       bottomNavigationBar: const SharedBottomNavBar(currentIndex: 3),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LuxuryGradients.darkBackground,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              BioColors.background,
+              Color(0xFF0D0E12),
+            ],
+          ),
         ),
         child: SafeArea(
           child: Column(
@@ -71,14 +78,14 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: LuxuryColors.cardBackground,
+                          color: BioColors.cardBg,
                           border: Border.all(
-                            color: LuxuryColors.subtleBorder,
+                            color: BioColors.outlineVariant,
                           ),
                         ),
                         child: const Icon(
                           Icons.arrow_back,
-                          color: LuxuryColors.textPrimary,
+                          color: BioColors.onSurface,
                           size: 20,
                         ),
                       ),
@@ -86,7 +93,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     const SizedBox(width: 16),
                     Text(
                       'ACCOUNT / SETTINGS',
-                      style: LuxuryTextStyles.headlineLarge.copyWith(
+                      style: BioTextStyles.headlineLg.copyWith(
                         letterSpacing: 3,
                       ),
                     ),
@@ -98,7 +105,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 const Expanded(
                   child: Center(
                     child: CircularProgressIndicator(
-                      color: LuxuryColors.platinumBlue,
+                      color: BioColors.primaryFixed,
                     ),
                   ),
                 )
@@ -110,12 +117,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                       // Master toggle
                       _buildSettingCard(
                         icon: Icons.notifications_active,
-                        iconColor: LuxuryColors.burnishedGold,
+                        iconColor: BioColors.primaryFixed,
                         title: 'Enable Notifications',
                         subtitle: 'Receive reminders and motivation',
                         trailing: Switch(
                           value: _settings!.enabled,
-                          activeThumbColor: LuxuryColors.burnishedGold,
+                          activeThumbColor: BioColors.primaryFixed,
                           onChanged: (value) {
                             setState(() {
                               _settings = NotificationSettings(
@@ -136,12 +143,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                         // Streak reminders
                         _buildSettingCard(
                           icon: Icons.local_fire_department,
-                          iconColor: LuxuryColors.deepRose,
+                          iconColor: BioColors.red500,
                           title: 'Streak Reminders',
                           subtitle: 'Get reminded to maintain your streak',
                           trailing: Switch(
                             value: _settings!.streakReminders,
-                            activeThumbColor: LuxuryColors.deepRose,
+                            activeThumbColor: BioColors.red500,
                             onChanged: (value) {
                               setState(() {
                                 _settings = NotificationSettings(
@@ -162,7 +169,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                         if (_settings!.streakReminders)
                           _buildSettingCard(
                             icon: Icons.access_time,
-                            iconColor: LuxuryColors.platinumBlue,
+                            iconColor: BioColors.blue400,
                             title: 'Reminder Time',
                             subtitle: _formatTime(_settings!.reminderHour, _settings!.reminderMinute),
                             onTap: () => _showTimePicker(),
@@ -174,12 +181,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                         // Daily motivation
                         _buildSettingCard(
                           icon: Icons.wb_sunny,
-                          iconColor: LuxuryColors.champagneGold,
+                          iconColor: BioColors.orange500,
                           title: 'Morning Motivation',
                           subtitle: 'Get inspired to start your day at 8 AM',
                           trailing: Switch(
                             value: _settings!.dailyMotivation,
-                            activeThumbColor: LuxuryColors.champagneGold,
+                            activeThumbColor: BioColors.orange500,
                             onChanged: (value) {
                               setState(() {
                                 _settings = NotificationSettings(
@@ -200,31 +207,31 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
 
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.schedule,
-                              color: LuxuryColors.emerald,
+                              color: BioColors.green500,
                               size: 18,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'FOCUS SCHEDULES',
-                              style: LuxuryTextStyles.labelLarge.copyWith(
-                                color: LuxuryColors.emerald,
+                              style: BioTextStyles.labelCaps.copyWith(
+                                color: BioColors.green500,
                                 letterSpacing: 2,
                               ),
                             ),
                             const Spacer(),
                             TextButton.icon(
                               onPressed: _showScheduleDialog,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.add,
                                 size: 16,
-                                color: LuxuryColors.emerald,
+                                color: BioColors.green500,
                               ),
                               label: Text(
                                 'Add',
-                                style: LuxuryTextStyles.bodyMedium.copyWith(
-                                  color: LuxuryColors.emerald,
+                                style: BioTextStyles.bodyMd.copyWith(
+                                  color: BioColors.green500,
                                 ),
                               ),
                             ),
@@ -236,16 +243,16 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             margin: const EdgeInsets.only(top: 8),
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              color: LuxuryColors.cardBackground.withValues(alpha: 0.4),
+                              borderRadius: BorderRadius.circular(12),
+                              color: BioColors.cardBg.withValues(alpha: 0.4),
                               border: Border.all(
-                                color: LuxuryColors.subtleBorder,
+                                color: BioColors.outlineVariant,
                               ),
                             ),
                             child: Text(
                               'No recurring schedules yet. Add one to auto-remind your deep work blocks.',
-                              style: LuxuryTextStyles.bodyMedium.copyWith(
-                                color: LuxuryColors.textSecondary,
+                              style: BioTextStyles.bodyMd.copyWith(
+                                color: BioColors.onSurfaceVariant,
                               ),
                             ),
                           )
@@ -262,7 +269,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                       // Cooldown Duration
                       _buildSettingCard(
                         icon: Icons.timer,
-                        iconColor: LuxuryColors.emerald,
+                        iconColor: BioColors.green500,
                         title: 'Emergency Break Cooldown',
                         subtitle: '${_settings!.cooldownMinutes} minutes',
                         onTap: () => _showCooldownPicker(),
@@ -279,7 +286,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                                 content: const Text(
                                   'Notifications are not supported on web. Run on Android/iOS to test.',
                                 ),
-                                backgroundColor: LuxuryColors.rubyRed,
+                                backgroundColor: BioColors.red500,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -298,7 +305,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                                 content: const Text(
                                   'Notification permission denied. Please enable it in device settings.',
                                 ),
-                                backgroundColor: LuxuryColors.rubyRed,
+                                backgroundColor: BioColors.red500,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -317,7 +324,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text('Test notification sent!'),
-                                backgroundColor: LuxuryColors.emerald,
+                                backgroundColor: BioColors.green500,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -329,7 +336,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Failed to send notification: $e'),
-                                backgroundColor: LuxuryColors.rubyRed,
+                                backgroundColor: BioColors.red500,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -341,24 +348,24 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                              color: BioColors.blue400.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.send,
-                                color: LuxuryColors.platinumBlue,
+                                color: BioColors.blue400,
                                 size: 20,
                               ),
                               const SizedBox(width: 10),
                               Text(
                                 'Send Test Notification',
-                                style: LuxuryTextStyles.labelLarge.copyWith(
-                                  color: LuxuryColors.platinumBlue,
+                                style: BioTextStyles.labelCaps.copyWith(
+                                  color: BioColors.blue400,
                                 ),
                               ),
                             ],
@@ -377,18 +384,18 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
 
   Widget _buildFocusScheduleCard(FocusSchedule schedule) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: LuxuryColors.cardBackground.withValues(alpha: 0.45),
-            borderRadius: BorderRadius.circular(14),
+            color: BioColors.cardBg.withValues(alpha: 0.45),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: schedule.enabled
-                  ? LuxuryColors.emerald.withValues(alpha: 0.3)
-                  : LuxuryColors.subtleBorder,
+                  ? BioColors.green500.withValues(alpha: 0.3)
+                  : BioColors.outlineVariant,
             ),
           ),
           child: Row(
@@ -398,16 +405,16 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: (schedule.enabled
-                          ? LuxuryColors.emerald
-                          : LuxuryColors.textSecondary)
+                          ? BioColors.green500
+                          : BioColors.onSurfaceVariant)
                       .withValues(alpha: 0.16),
                 ),
                 child: Icon(
                   Icons.timelapse,
                   size: 18,
                   color: schedule.enabled
-                      ? LuxuryColors.emerald
-                      : LuxuryColors.textSecondary,
+                      ? BioColors.green500
+                      : BioColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: 12),
@@ -419,15 +426,15 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     children: [
                       Text(
                         schedule.name,
-                        style: LuxuryTextStyles.titleLarge.copyWith(
+                        style: BioTextStyles.headlineLg.copyWith(
                           fontSize: 15,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${_formatTime(schedule.hour, schedule.minute)} • ${schedule.durationMinutes}m • ${_formatDays(schedule.days)}',
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textSecondary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
@@ -437,7 +444,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
               ),
               Switch(
                 value: schedule.enabled,
-                activeThumbColor: LuxuryColors.emerald,
+                activeThumbColor: BioColors.green500,
                 onChanged: (value) async {
                   await NotificationService.saveFocusSchedule(
                     schedule.copyWith(enabled: value),
@@ -446,12 +453,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 },
               ),
               PopupMenuButton<String>(
-                icon: Icon(
+                icon: const Icon(
                   Icons.more_vert,
-                  color: LuxuryColors.textSecondary,
+                  color: BioColors.onSurfaceVariant,
                   size: 18,
                 ),
-                color: LuxuryColors.cardBackground,
+                color: BioColors.cardBg,
                 onSelected: (value) async {
                   if (value == 'edit') {
                     _showScheduleDialog(existing: schedule);
@@ -489,13 +496,13 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
-            backgroundColor: LuxuryColors.cardBackground,
+            backgroundColor: BioColors.cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
             ),
             title: Text(
               existing == null ? 'ADD SCHEDULE' : 'EDIT SCHEDULE',
-              style: LuxuryTextStyles.titleLarge.copyWith(letterSpacing: 2),
+              style: BioTextStyles.headlineLg.copyWith(letterSpacing: 2, fontSize: 18),
             ),
             content: SingleChildScrollView(
               child: Column(
@@ -503,17 +510,17 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 children: [
                   TextField(
                     controller: nameController,
-                    style: const TextStyle(color: LuxuryColors.textPrimary),
+                    style: const TextStyle(color: BioColors.onSurface),
                     decoration: InputDecoration(
                       labelText: 'Name',
-                      labelStyle: TextStyle(color: LuxuryColors.textSecondary),
+                      labelStyle: const TextStyle(color: BioColors.onSurfaceVariant),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: LuxuryColors.subtleBorder),
+                        borderSide: const BorderSide(color: BioColors.outlineVariant),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: LuxuryColors.emerald),
+                        borderSide: const BorderSide(color: BioColors.green500),
                       ),
                     ),
                   ),
@@ -521,27 +528,27 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                   TextField(
                     controller: durationController,
                     keyboardType: TextInputType.number,
-                    style: const TextStyle(color: LuxuryColors.textPrimary),
+                    style: const TextStyle(color: BioColors.onSurface),
                     decoration: InputDecoration(
                       labelText: 'Duration (minutes)',
-                      labelStyle: TextStyle(color: LuxuryColors.textSecondary),
+                      labelStyle: const TextStyle(color: BioColors.onSurfaceVariant),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: LuxuryColors.subtleBorder),
+                        borderSide: const BorderSide(color: BioColors.outlineVariant),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: LuxuryColors.emerald),
+                        borderSide: const BorderSide(color: BioColors.green500),
                       ),
                     ),
                   ),
                   const SizedBox(height: 12),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.access_time, color: LuxuryColors.platinumBlue),
+                    leading: const Icon(Icons.access_time, color: BioColors.blue400),
                     title: Text(
                       _formatTime(selectedTime.hour, selectedTime.minute),
-                      style: LuxuryTextStyles.bodyLarge,
+                      style: BioTextStyles.bodyLg,
                     ),
                     trailing: TextButton(
                       onPressed: () async {
@@ -561,8 +568,8 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Repeat Days',
-                      style: LuxuryTextStyles.bodyMedium.copyWith(
-                        color: LuxuryColors.textSecondary,
+                      style: BioTextStyles.bodyMd.copyWith(
+                        color: BioColors.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -594,9 +601,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             }
                           });
                         },
-                        selectedColor: LuxuryColors.emerald.withValues(alpha: 0.25),
-                        checkmarkColor: LuxuryColors.emerald,
-                        side: BorderSide(color: LuxuryColors.subtleBorder),
+                        selectedColor: BioColors.green500.withValues(alpha: 0.25),
+                        checkmarkColor: BioColors.green500,
+                        side: const BorderSide(color: BioColors.outlineVariant),
                       );
                     }).toList(),
                   ),
@@ -604,9 +611,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                   SwitchListTile(
                     value: enabled,
                     onChanged: (value) => setDialogState(() => enabled = value),
-                    activeThumbColor: LuxuryColors.emerald,
+                    activeThumbColor: BioColors.green500,
                     contentPadding: EdgeInsets.zero,
-                    title: Text('Enabled', style: LuxuryTextStyles.bodyLarge),
+                    title: Text('Enabled', style: BioTextStyles.bodyLg),
                   ),
                 ],
               ),
@@ -614,14 +621,14 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(
+                child: const Text(
                   'Cancel',
-                  style: TextStyle(color: LuxuryColors.textSecondary),
+                  style: TextStyle(color: BioColors.onSurfaceVariant),
                 ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: LuxuryColors.emerald,
+                  backgroundColor: BioColors.green500,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -692,16 +699,16 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: LuxuryColors.cardBackground.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(16),
+              color: BioColors.cardBg.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: LuxuryColors.subtleBorder,
+                color: BioColors.outlineVariant,
               ),
             ),
             child: Row(
@@ -721,15 +728,15 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     children: [
                       Text(
                         title,
-                        style: LuxuryTextStyles.titleLarge.copyWith(
+                        style: BioTextStyles.headlineLg.copyWith(
                           fontSize: 16,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textTertiary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -737,9 +744,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 ),
                 if (trailing != null) trailing,
                 if (onTap != null)
-                  Icon(
+                  const Icon(
                     Icons.chevron_right,
-                    color: LuxuryColors.textTertiary,
+                    color: BioColors.onSurfaceVariant,
                   ),
               ],
             ),
@@ -767,8 +774,8 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: LuxuryColors.burnishedGold,
-              surface: LuxuryColors.cardBackground,
+              primary: BioColors.primaryFixed,
+              surface: BioColors.cardBg,
             ),
           ),
           child: child!,
@@ -796,10 +803,10 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: LuxuryColors.cardBackground,
+          backgroundColor: BioColors.cardBg,
           title: Text(
             'Emergency Break Cooldown',
-            style: LuxuryTextStyles.titleLarge,
+            style: BioTextStyles.headlineLg.copyWith(fontSize: 18),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -812,12 +819,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 return ListTile(
                   title: Text(
                     '$minutes minutes',
-                    style: LuxuryTextStyles.bodyLarge.copyWith(
-                      color: isSelected ? LuxuryColors.burnishedGold : LuxuryColors.textPrimary,
+                    style: BioTextStyles.bodyLg.copyWith(
+                      color: isSelected ? BioColors.primaryFixed : BioColors.onSurface,
                     ),
                   ),
                   trailing: isSelected
-                      ? Icon(Icons.check, color: LuxuryColors.burnishedGold)
+                      ? const Icon(Icons.check, color: BioColors.primaryFixed)
                       : null,
                   onTap: () => Navigator.pop(context, minutes),
                 );
@@ -829,7 +836,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Cancel',
-                style: LuxuryTextStyles.bodyMedium.copyWith(color: LuxuryColors.textSecondary),
+                style: BioTextStyles.bodyMd.copyWith(color: BioColors.onSurfaceVariant),
               ),
             ),
           ],

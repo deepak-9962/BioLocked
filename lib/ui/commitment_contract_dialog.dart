@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 
 /// Shows a commitment contract dialog that requires the user to type
 /// a specific phrase before entering a Hard Lock session.
@@ -107,22 +107,22 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                       height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: LuxuryColors.rubyRed.withValues(alpha: 0.1 + 0.08 * _pulseController.value),
+                        color: BioColors.red500.withValues(alpha: 0.1 + 0.08 * _pulseController.value),
                         border: Border.all(
-                          color: LuxuryColors.rubyRed.withValues(alpha: 0.6 + 0.3 * _pulseController.value),
+                          color: BioColors.red500.withValues(alpha: 0.6 + 0.3 * _pulseController.value),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: LuxuryColors.rubyRed.withValues(alpha: 0.3 * _pulseController.value),
+                            color: BioColors.red500.withValues(alpha: 0.3 * _pulseController.value),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),
                         ],
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.gavel,
-                        color: LuxuryColors.rubyRed,
+                        color: BioColors.red500,
                         size: 40,
                       ),
                     );
@@ -133,8 +133,8 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
 
                 Text(
                   'COMMITMENT CONTRACT',
-                  style: LuxuryTextStyles.headlineLarge.copyWith(
-                    color: LuxuryColors.rubyRed,
+                  style: BioTextStyles.headlineLg.copyWith(
+                    color: BioColors.red500,
                     letterSpacing: 4,
                     fontSize: 18,
                   ),
@@ -145,8 +145,8 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
 
                 Text(
                   'Hard Lock requires your word.',
-                  style: LuxuryTextStyles.bodyLarge.copyWith(
-                    color: LuxuryColors.textSecondary,
+                  style: BioTextStyles.bodyLg.copyWith(
+                    color: BioColors.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -157,10 +157,10 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: LuxuryColors.cardBackground,
-                    borderRadius: BorderRadius.circular(20),
+                    color: BioColors.cardBg,
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: LuxuryColors.rubyRed.withValues(alpha: 0.3),
+                      color: BioColors.red500.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -170,14 +170,14 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                       const SizedBox(height: 12),
                       _contractHighlight(
                         widget.taskName.isNotEmpty ? widget.taskName : 'Deep Work',
-                        LuxuryColors.burnishedGold,
+                        BioColors.primaryFixed,
                       ),
                       const SizedBox(height: 8),
                       _contractLine('for a duration of:'),
                       const SizedBox(height: 8),
                       _contractHighlight(
                         '${widget.durationMinutes} minutes',
-                        LuxuryColors.rubyRed,
+                        BioColors.red500,
                       ),
                       const SizedBox(height: 16),
                       _contractLine(
@@ -197,25 +197,25 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: LuxuryColors.elevatedSurface,
+                    color: BioColors.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: LuxuryColors.subtleBorder),
+                    border: Border.all(color: BioColors.outlineVariant),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Type exactly to proceed:',
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textSecondary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         '"$_requiredPhrase"',
-                        style: LuxuryTextStyles.bodyLarge.copyWith(
-                          color: LuxuryColors.burnishedGold,
+                        style: BioTextStyles.bodyLg.copyWith(
+                          color: BioColors.primaryFixed,
                           fontStyle: FontStyle.italic,
                           height: 1.4,
                         ),
@@ -230,22 +230,22 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                 TextField(
                   controller: _controller,
                   maxLines: 2,
-                  style: LuxuryTextStyles.bodyLarge.copyWith(
+                  style: BioTextStyles.bodyLg.copyWith(
                     color: _isMatch
-                        ? LuxuryColors.emerald
+                        ? BioColors.green500
                         : _hasError
-                            ? LuxuryColors.rubyRed.withValues(alpha: 0.8)
-                            : LuxuryColors.textPrimary,
+                            ? BioColors.red500.withValues(alpha: 0.8)
+                            : BioColors.onSurface,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Type the commitment phrase...',
-                    hintStyle: TextStyle(color: LuxuryColors.textTertiary),
+                    hintStyle: TextStyle(color: BioColors.onSurfaceVariant.withValues(alpha: 0.5)),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
                         color: _isMatch
-                            ? LuxuryColors.emerald
-                            : LuxuryColors.subtleBorder,
+                            ? BioColors.green500
+                            : BioColors.outlineVariant,
                         width: _isMatch ? 2 : 1,
                       ),
                     ),
@@ -253,15 +253,15 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
                         color: _isMatch
-                            ? LuxuryColors.emerald
-                            : LuxuryColors.rubyRed,
+                            ? BioColors.green500
+                            : BioColors.red500,
                         width: 2,
                       ),
                     ),
                     filled: true,
-                    fillColor: LuxuryColors.cardBackground,
+                    fillColor: BioColors.cardBg,
                     suffixIcon: _isMatch
-                        ? Icon(Icons.check_circle, color: LuxuryColors.emerald)
+                        ? const Icon(Icons.check_circle, color: BioColors.green500)
                         : null,
                   ),
                 ),
@@ -281,26 +281,26 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                         gradient: _isMatch
                             ? LinearGradient(
                                 colors: [
-                                  LuxuryColors.rubyRed,
-                                  LuxuryColors.rubyRed.withValues(alpha: 0.7),
+                                  BioColors.red500,
+                                  BioColors.red700,
                                 ],
                               )
                             : LinearGradient(
                                 colors: [
-                                  LuxuryColors.cardBackground,
-                                  LuxuryColors.cardBackground,
+                                  BioColors.cardBg,
+                                  BioColors.cardBg,
                                 ],
                               ),
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: _isMatch
-                              ? LuxuryColors.rubyRed
-                              : LuxuryColors.subtleBorder,
+                              ? BioColors.red500
+                              : BioColors.outlineVariant,
                         ),
                         boxShadow: _isMatch
                             ? [
                                 BoxShadow(
-                                  color: LuxuryColors.rubyRed.withValues(alpha: 0.4),
+                                  color: BioColors.red500.withValues(alpha: 0.4),
                                   blurRadius: 20,
                                   offset: const Offset(0, 6),
                                 ),
@@ -314,16 +314,16 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                             Icons.lock,
                             color: _isMatch
                                 ? Colors.white
-                                : LuxuryColors.textSecondary,
+                                : BioColors.onSurfaceVariant,
                             size: 20,
                           ),
                           const SizedBox(width: 10),
                           Text(
                             'SEAL THE CONTRACT & ENTER',
-                            style: LuxuryTextStyles.labelLarge.copyWith(
+                            style: BioTextStyles.labelCaps.copyWith(
                               color: _isMatch
                                   ? Colors.white
-                                  : LuxuryColors.textSecondary,
+                                  : BioColors.onSurfaceVariant,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.5,
                             ),
@@ -341,7 +341,7 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text(
                     'I\'m not ready yet',
-                    style: TextStyle(color: LuxuryColors.textSecondary),
+                    style: TextStyle(color: BioColors.onSurfaceVariant),
                   ),
                 ),
 
@@ -357,8 +357,8 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
   Widget _contractLine(String text) {
     return Text(
       text,
-      style: LuxuryTextStyles.bodyMedium.copyWith(
-        color: LuxuryColors.textSecondary,
+      style: BioTextStyles.bodyMd.copyWith(
+        color: BioColors.onSurfaceVariant,
         height: 1.6,
       ),
     );
@@ -374,9 +374,10 @@ class _CommitmentContractPageState extends State<_CommitmentContractPage>
       ),
       child: Text(
         text,
-        style: LuxuryTextStyles.titleLarge.copyWith(
+        style: BioTextStyles.headlineLg.copyWith(
           color: color,
           fontWeight: FontWeight.bold,
+          fontSize: 18,
         ),
       ),
     );

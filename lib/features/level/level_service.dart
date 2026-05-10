@@ -212,6 +212,31 @@ class LevelService {
     await _syncLevelToRemote(data);
   }
 
+  /// One-time helper to push existing local level data into Supabase.
+  Future<void> backfillLocalToRemote() async {
+    final userId = _currentUserId();
+    if (userId == null) return;
+
+    final localLevelRaw = await _storage.read(key: _levelKey);
+    if (localLevelRaw == null) return;
+
+    try {
+      final decoded = jsonDecode(localLevelRaw);
+      if (decoded is! Map) return;
+
+      await Supabase.instance.client.from(_progressTable).upsert(
+        {
+          'user_id': userId,
+          'level_json': Map<String, dynamic>.from(decoded),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        onConflict: 'user_id',
+      );
+    } catch (e) {
+      debugPrint('[LevelService] Local backfill failed: $e');
+    }
+  }
+
   String? _currentUserId() {
     try {
       return Supabase.instance.client.auth.currentUser?.id;

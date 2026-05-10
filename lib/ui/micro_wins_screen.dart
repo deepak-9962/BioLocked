@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import '../features/micro_wins/micro_wins_service.dart';
 import '../features/session/session_provider.dart';
 import '../features/audio/sound_service.dart';
-import 'theme/luxury_theme.dart';
+import 'theme/bio_theme.dart';
 
 class MicroWinsScreen extends ConsumerStatefulWidget {
   const MicroWinsScreen({super.key});
@@ -46,10 +46,10 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
         speed: 0.3 + random.nextDouble() * 0.5,
         size: 4 + random.nextDouble() * 8,
         color: [
-          LuxuryColors.burnishedGold,
-          LuxuryColors.platinumBlue,
-          LuxuryColors.emerald,
-          LuxuryColors.amethyst,
+          BioColors.primaryFixed,
+          BioColors.blue400,
+          BioColors.green500,
+          BioColors.purple500,
         ][random.nextInt(4)],
       ));
     }
@@ -101,13 +101,20 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
     final todayWinsAsync = ref.watch(todayMicroWinsProvider);
 
     return Scaffold(
-      backgroundColor: LuxuryColors.richBlack,
+      backgroundColor: BioColors.background,
       body: Stack(
         children: [
           // Background gradient
           Container(
-            decoration: BoxDecoration(
-              gradient: LuxuryGradients.darkBackground,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  BioColors.background,
+                  Color(0xFF0D0E12),
+                ],
+              ),
             ),
           ),
 
@@ -145,14 +152,14 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: LuxuryColors.cardBackground,
+                            color: BioColors.cardBg,
                             border: Border.all(
-                              color: LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                              color: BioColors.blue400.withValues(alpha: 0.3),
                             ),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_back,
-                            color: LuxuryColors.platinumBlue,
+                            color: BioColors.blue400,
                             size: 20,
                           ),
                         ),
@@ -183,7 +190,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                             builder: (context, child) {
                               return Transform.scale(
                                 scale: 0.9 + (_pulseController.value * 0.1),
-                                child: Text(
+                                child: const Text(
                                   '⚡',
                                   style: TextStyle(fontSize: 32),
                                 ),
@@ -194,13 +201,13 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                           ShaderMask(
                             shaderCallback: (bounds) => LinearGradient(
                               colors: [
-                                LuxuryColors.burnishedGold,
-                                LuxuryColors.platinumBlue,
+                                BioColors.primaryFixed,
+                                BioColors.blue400,
                               ],
                             ).createShader(bounds),
                             child: Text(
                               'MICRO-WINS',
-                              style: LuxuryTextStyles.headlineLarge.copyWith(
+                              style: BioTextStyles.headlineLg.copyWith(
                                 color: Colors.white,
                                 letterSpacing: 4,
                               ),
@@ -212,8 +219,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                       Text(
                         'Low energy? Log quick wins to protect your streak!',
                         textAlign: TextAlign.center,
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textSecondary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -267,13 +274,20 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             gradient: isProtected
-                ? LuxuryGradients.emeraldGlow
-                : LuxuryGradients.frostedGlass,
+                ? LinearGradient(
+                    colors: [BioColors.green500, BioColors.green500.withValues(alpha: 0.7)],
+                  )
+                : LinearGradient(
+                    colors: [
+                      BioColors.surfaceContainerHigh.withValues(alpha: 0.5),
+                      BioColors.surfaceContainerHigh.withValues(alpha: 0.3),
+                    ],
+                  ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isProtected
-                  ? LuxuryColors.emerald.withValues(alpha: 0.5)
-                  : LuxuryColors.platinumBlue.withValues(alpha: 0.3),
+                  ? BioColors.green500.withValues(alpha: 0.5)
+                  : BioColors.blue400.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -281,14 +295,14 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
             children: [
               Icon(
                 isProtected ? Icons.shield : Icons.shield_outlined,
-                color: isProtected ? Colors.white : LuxuryColors.platinumBlue,
+                color: isProtected ? Colors.white : BioColors.blue400,
                 size: 18,
               ),
               const SizedBox(width: 8),
               Text(
                 '${wins.count}/3',
-                style: LuxuryTextStyles.labelLarge.copyWith(
-                  color: isProtected ? Colors.white : LuxuryColors.platinumBlue,
+                style: BioTextStyles.labelCaps.copyWith(
+                  color: isProtected ? Colors.white : BioColors.blue400,
                 ),
               ),
             ],
@@ -305,7 +319,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
@@ -314,16 +328,21 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
               gradient: isProtected
                   ? LinearGradient(
                       colors: [
-                        LuxuryColors.emerald.withValues(alpha: 0.2),
-                        LuxuryColors.emerald.withValues(alpha: 0.1),
+                        BioColors.green500.withValues(alpha: 0.2),
+                        BioColors.green500.withValues(alpha: 0.1),
                       ],
                     )
-                  : LuxuryGradients.frostedGlass,
-              borderRadius: BorderRadius.circular(20),
+                  : LinearGradient(
+                      colors: [
+                        BioColors.surfaceContainerHigh.withValues(alpha: 0.5),
+                        BioColors.surfaceContainerHigh.withValues(alpha: 0.3),
+                      ],
+                    ),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isProtected
-                    ? LuxuryColors.emerald.withValues(alpha: 0.5)
-                    : LuxuryColors.burnishedGold.withValues(alpha: 0.3),
+                    ? BioColors.green500.withValues(alpha: 0.5)
+                    : BioColors.primaryFixed.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -333,14 +352,14 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isProtected
-                        ? LuxuryColors.emerald.withValues(alpha: 0.2)
-                        : LuxuryColors.burnishedGold.withValues(alpha: 0.2),
+                        ? BioColors.green500.withValues(alpha: 0.2)
+                        : BioColors.primaryFixed.withValues(alpha: 0.2),
                   ),
                   child: Icon(
                     isProtected ? Icons.verified : Icons.local_fire_department,
                     color: isProtected
-                        ? LuxuryColors.emerald
-                        : LuxuryColors.burnishedGold,
+                        ? BioColors.green500
+                        : BioColors.primaryFixed,
                     size: 28,
                   ),
                 ),
@@ -353,10 +372,10 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                         isProtected
                             ? '🎉 STREAK PROTECTED!'
                             : '🔥 $remaining more to protect streak',
-                        style: LuxuryTextStyles.titleLarge.copyWith(
+                        style: BioTextStyles.headlineLg.copyWith(
                           color: isProtected
-                              ? LuxuryColors.emerald
-                              : LuxuryColors.burnishedGold,
+                              ? BioColors.green500
+                              : BioColors.primaryFixed,
                           fontSize: 16,
                         ),
                       ),
@@ -365,8 +384,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                         isProtected
                             ? 'Great job! You kept your momentum going.'
                             : 'Log $remaining quick win${remaining > 1 ? 's' : ''} to save your streak',
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textSecondary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurfaceVariant,
                           fontSize: 13,
                         ),
                       ),
@@ -389,8 +408,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
         children: [
           Text(
             'CHOOSE CATEGORY',
-            style: LuxuryTextStyles.labelLarge.copyWith(
-              color: LuxuryColors.textSecondary,
+            style: BioTextStyles.labelCaps.copyWith(
+              color: BioColors.onSurfaceVariant,
               letterSpacing: 2,
               fontSize: 12,
             ),
@@ -421,7 +440,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
         setState(() => _selectedCategory = category);
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
@@ -435,7 +454,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                   color.withValues(alpha: 0.08),
                 ],
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: color.withValues(alpha: 0.4),
               ),
@@ -457,7 +476,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                 const SizedBox(height: 12),
                 Text(
                   category.label.toUpperCase(),
-                  style: LuxuryTextStyles.labelLarge.copyWith(
+                  style: BioTextStyles.labelCaps.copyWith(
                     color: color,
                     letterSpacing: 2,
                   ),
@@ -466,8 +485,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                 Text(
                   category.description,
                   textAlign: TextAlign.center,
-                  style: LuxuryTextStyles.bodyMedium.copyWith(
-                    color: LuxuryColors.textSecondary,
+                  style: BioTextStyles.bodyMd.copyWith(
+                    color: BioColors.onSurfaceVariant,
                     fontSize: 11,
                   ),
                 ),
@@ -508,7 +527,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                       const SizedBox(width: 6),
                       Text(
                         'Back',
-                        style: LuxuryTextStyles.bodyMedium.copyWith(color: color),
+                        style: BioTextStyles.bodyMd.copyWith(color: color),
                       ),
                     ],
                   ),
@@ -522,7 +541,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
               const SizedBox(width: 8),
               Text(
                 category.label.toUpperCase(),
-                style: LuxuryTextStyles.labelLarge.copyWith(
+                style: BioTextStyles.labelCaps.copyWith(
                   color: color,
                   letterSpacing: 2,
                 ),
@@ -554,7 +573,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                               color.withValues(alpha: 0.08),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: color.withValues(alpha: 0.4),
                           ),
@@ -570,8 +589,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                             const SizedBox(width: 8),
                             Text(
                               win,
-                              style: LuxuryTextStyles.bodyMedium.copyWith(
-                                color: LuxuryColors.textPrimary,
+                              style: BioTextStyles.bodyMd.copyWith(
+                                color: BioColors.onSurface,
                               ),
                             ),
                           ],
@@ -586,8 +605,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                 // Custom win input
                 Text(
                   'OR LOG CUSTOM WIN',
-                  style: LuxuryTextStyles.labelLarge.copyWith(
-                    color: LuxuryColors.textSecondary,
+                  style: BioTextStyles.labelCaps.copyWith(
+                    color: BioColors.onSurfaceVariant,
                     letterSpacing: 2,
                     fontSize: 11,
                   ),
@@ -598,21 +617,21 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: LuxuryColors.cardBackground,
+                          borderRadius: BorderRadius.circular(12),
+                          color: BioColors.cardBg,
                           border: Border.all(
                             color: color.withValues(alpha: 0.3),
                           ),
                         ),
                         child: TextField(
                           controller: _customWinController,
-                          style: LuxuryTextStyles.bodyLarge.copyWith(
-                            color: LuxuryColors.textPrimary,
+                          style: BioTextStyles.bodyLg.copyWith(
+                            color: BioColors.onSurface,
                           ),
                           decoration: InputDecoration(
                             hintText: 'What did you accomplish?',
-                            hintStyle: LuxuryTextStyles.bodyMedium.copyWith(
-                              color: LuxuryColors.textSecondary.withValues(alpha: 0.5),
+                            hintStyle: BioTextStyles.bodyMd.copyWith(
+                              color: BioColors.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.all(16),
@@ -638,7 +657,7 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                           gradient: LinearGradient(
                             colors: [color, color.withValues(alpha: 0.8)],
                           ),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
                               color: color.withValues(alpha: 0.4),
@@ -647,9 +666,9 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                             ),
                           ],
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.check,
-                          color: LuxuryColors.richBlack,
+                          color: BioColors.background,
                           size: 24,
                         ),
                       ),
@@ -673,8 +692,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
         children: [
           Text(
             'TODAY\'S WINS (${wins.count})',
-            style: LuxuryTextStyles.labelLarge.copyWith(
-              color: LuxuryColors.textSecondary,
+            style: BioTextStyles.labelCaps.copyWith(
+              color: BioColors.onSurfaceVariant,
               letterSpacing: 2,
               fontSize: 10,
             ),
@@ -704,8 +723,8 @@ class _MicroWinsScreenState extends ConsumerState<MicroWinsScreen>
                       const SizedBox(width: 8),
                       Text(
                         win.title,
-                        style: LuxuryTextStyles.bodyMedium.copyWith(
-                          color: LuxuryColors.textPrimary,
+                        style: BioTextStyles.bodyMd.copyWith(
+                          color: BioColors.onSurface,
                           fontSize: 13,
                         ),
                       ),
